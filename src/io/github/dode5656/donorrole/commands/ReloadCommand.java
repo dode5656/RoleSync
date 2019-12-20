@@ -15,14 +15,14 @@ public class ReloadCommand implements CommandExecutor
     
     public boolean onCommand(final CommandSender commandSender, final Command command, final String s, final String[] strings) {
         try {
-            this.plugin.reloadConfig();
+            plugin.reloadConfig();
         }
         catch (Exception e) {
-            this.plugin.getLogger().severe("Error while trying to reload config" + e);
-            commandSender.sendMessage(this.plugin.color(this.plugin.prefix + "Error while trying to reload config, error in the console."));
+            plugin.getLogger().severe("Error while trying to reload config" + e);
+            commandSender.sendMessage(plugin.color(plugin.prefix + "Error while trying to reload config, see error in the console."));
             return true;
         }
-        commandSender.sendMessage(this.plugin.color(this.plugin.prefix + "Config file reloaded successfully!"));
+        commandSender.sendMessage(plugin.color(plugin.prefix + "Config file reloaded successfully!"));
         return true;
     }
 }
