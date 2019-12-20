@@ -1,0 +1,34 @@
+# Place here the bot token that can be get from https://discordapp.com/developers/applications/me
+bot-token: "REPLACEBOTTOKEN"
+# Place here the discord server id of the server you want the role to be given in.
+server-id: "REPLACESERVERID"
+# Place here the discord role id of the role that you want to give players
+role-id: "REPLACEROLEID"
+
+# Place here the prefix you want the plugin to use. No need to add a space at the end.
+prefix: "&6[&r&eDonorRole&6]&2"
+
+# How do you want data (about Players) to be stored? Can be: "file" or "mysql"
+# IMPORTANT: For now using mysql is VERY inefficient in the way I have coded it. It is unstable and can produce leakage and deadlock your server.
+storage: "file"
+
+# If you are using mysql fill in these
+mysql_username: "YOUR DB USERNAME" # Enter in your db username
+mysql_password: "YOUR DB PASSWORD" # Enter your password for the db
+mysql_url: "jdbc:mysql://example.com:3306/VerifiedPlayers?autoReconnect=true" # Enter URL with the db name
+
+# Placeholders: {discord_tag}, {player_name}, {discord_server_name}
+# Feel free to replace the messages to your choice.
+messages:
+  verifyRequest: "Hey! A user with the minecraft name `{player_name}` has made a request to verify his account and receive a special rank in the {discord_server_name} server. Did you make this request? Reply with `Yes` or `No`. You have 2 minutes to reply."
+  verifiedMinecraft: "Your account has been verified with the discord user: {discord_tag}"
+  verifiedDiscord: "Your account has been verified with the minecraft user: {player_name}"
+  deniedMinecraft: "Failed to verify you with: {discord_tag}. User denied the request."
+  deniedDiscord: "Oh ok! Seems that you don't want to verify yourself or that someone has made a request to your account. Cancelling request!"
+  error: "An error occurred. Please report to the Administrators about the issue."
+  badName: "Please provide a valid discord name that is in the {discord_server_name} discord server."
+  tooLongMC: "Uh oh! You took longer than 2 minutes to verify. To verify yourself you have to run the command again."
+  tooLongDiscord: "Uh oh! You took longer than 2 minutes to reply. To verify yourself you have to run the command in the server again."
+  alreadyVerified: "You are already verified in this Discord/MC account."
+# Time till verify request times out when no one answers. Put -1 if you want no timeout. IN MINUTES
+verifyTimeout: 2

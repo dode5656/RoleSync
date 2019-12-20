@@ -1,0 +1,24 @@
+name: DonorRole
+version: 1.0.0
+author: dode5656
+main: io.github.dode5656.donorrole.DonorRole
+description: Plugin that links discord and minecraft and gives roles to the user in the server's discord.
+commands:
+  donor:
+    permission: donorrole.use
+    permission-message: You don't have enough permissions to use this command!
+    description: Gives the user his donor role in discord if he has a rank in the server.
+    usage: /<command> <discordname> - Don't forget to add the numbers after the \#.
+  donorreload:
+    permission: donorrole.reload
+    permission-message: You don't have enough permissions to use this command!
+    description: Reloads the DonorRole config.
+    usage: /<command>
+    aliases: ['dreload']
+permissions:
+  donorrole.*:
+    description: Gives access to all DonorRole commands
+  donorrole.use:
+    description: Gives access to use the /donor command to get verified in discord server.
+  donorrole.reload:
+    description: Gives access to reload the config of the plugin
