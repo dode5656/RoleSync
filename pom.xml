@@ -46,11 +46,6 @@
             </exclusions>
         </dependency>
         <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
-            <version>5.1.41</version>
-        </dependency>
-        <dependency>
             <groupId>com.jagrosh</groupId>
             <artifactId>jda-utilities-commons</artifactId>
             <version>3.0.2</version>
@@ -95,12 +90,6 @@
                                 </filter>
                                 <filter>
                                     <artifact>net.dv8tion:JDA</artifact>
-                                    <includes>
-                                        <include>**</include>
-                                    </includes>
-                                </filter>
-                                <filter>
-                                    <artifact>mysql:mysql-connector-java</artifact>
                                     <includes>
                                         <include>**</include>
                                     </includes>

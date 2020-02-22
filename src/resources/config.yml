@@ -8,15 +8,6 @@ role-id: "REPLACEROLEID"
 # Place here the prefix you want the plugin to use. No need to add a space at the end.
 prefix: "&6[&r&eDonorRole&6]&2"
 
-# How do you want data (about Players) to be stored? Can be: "file" or "mysql"
-# IMPORTANT: For now using mysql is VERY inefficient in the way I have coded it. It is unstable and can produce leakage and deadlock your server.
-storage: "file"
-
-# If you are using mysql fill in these
-mysql_username: "YOUR DB USERNAME" # Enter in your db username
-mysql_password: "YOUR DB PASSWORD" # Enter your password for the db
-mysql_url: "jdbc:mysql://example.com:3306/VerifiedPlayers?autoReconnect=true" # Enter URL with the db name
-
 # Placeholders: {discord_tag}, {player_name}, {discord_server_name}
 # Feel free to replace the messages to your choice.
 messages:
@@ -30,5 +21,11 @@ messages:
   tooLongMC: "Uh oh! You took longer than 2 minutes to verify. To verify yourself you have to run the command again."
   tooLongDiscord: "Uh oh! You took longer than 2 minutes to reply. To verify yourself you have to run the command in the server again."
   alreadyVerified: "You are already verified in this Discord/MC account."
+  player-only: "This command is only for Players. It can't be run in console."
+  invalid-server-id: "Your supplied server id is invalid. Please update it as soon as possible."
+  default-value: "Found the default value for {value} value. This is an important value, without it the plugin can't work. Disabling plugin!"  # Placeholders: {value}
+  config-reloaded: "Config file reloaded successfully!"
+  config-reload-error: "Error while trying to reload config, see error in the console."
+
 # Time till verify request times out when no one answers. Put -1 if you want no timeout. IN MINUTES
 verifyTimeout: 2
