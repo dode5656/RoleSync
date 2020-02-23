@@ -22,3 +22,5 @@ permissions:
     description: Gives access to use the /donor command to get verified in discord server.
   donorrole.reload:
     description: Gives access to reload the config of the plugin
+  donorrole.role.*:
+    description: When doing /donor, it gives the role with the same name as in the config.

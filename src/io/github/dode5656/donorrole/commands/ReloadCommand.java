@@ -23,7 +23,6 @@ public class ReloadCommand implements CommandExecutor
         catch (Exception e) {
             plugin.getLogger().log(Level.SEVERE, "Error while trying to reload config" + e);
             commandSender.sendMessage(plugin.getMessageManager().format(Message.CONFIGRELOADERROR));
-            plugin.getServer().getPluginManager().disablePlugin(plugin);
             return true;
         }
         commandSender.sendMessage(plugin.getMessageManager().format(Message.CONFIGRELOADED));

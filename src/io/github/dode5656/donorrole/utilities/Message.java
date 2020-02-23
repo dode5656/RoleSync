@@ -18,7 +18,8 @@ public enum Message {
     INVALIDSERVERID("messages.invalid-server-id"),
     DEFAULTVALUE("messages.default-value"),
     CONFIGRELOADED("messages.config-reloaded"),
-    CONFIGRELOADERROR("config-reload-error")
+    CONFIGRELOADERROR("messages.config-reload-error"),
+    UPDATEDROLES("messages.updated-roles")
 
     ;
     private String key;

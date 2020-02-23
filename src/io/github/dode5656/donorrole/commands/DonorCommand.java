@@ -6,19 +6,16 @@ import io.github.dode5656.donorrole.utilities.MessageManager;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Guild;
 
-import java.util.Objects;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Level;
 
+import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.events.message.priv.PrivateMessageReceivedEvent;
 import org.bukkit.entity.Player;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-
-import javax.security.auth.login.LoginException;
-
-import net.dv8tion.jda.api.JDABuilder;
-import net.dv8tion.jda.api.AccountType;
 import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
 import net.dv8tion.jda.api.JDA;
 import io.github.dode5656.donorrole.DonorRole;
@@ -26,127 +23,143 @@ import org.bukkit.command.CommandExecutor;
 
 public class DonorCommand implements CommandExecutor {
     private DonorRole plugin;
-    public JDA jda;
     private EventWaiter waiter;
+    private JDA jda;
 
     public DonorCommand(final DonorRole plugin) {
         this.waiter = new EventWaiter();
         this.plugin = plugin;
-        this.startBot();
+        this.jda = plugin.getJDA();
         this.jda.addEventListener(this.waiter);
-    }
-
-    private void startBot() {
-        try {
-            this.jda = new JDABuilder(AccountType.BOT).setToken(plugin.getConfig().getString("bot-token")).build();
-        } catch (LoginException e) {
-            plugin.getLogger().log(Level.SEVERE, "Error when logging in!", e);
-            plugin.getServer().getPluginManager().disablePlugin(plugin);
-        }
     }
 
     public boolean onCommand(final CommandSender sender, final Command cmd, final String label, final String[] args) {
         MessageManager messageManager = plugin.getMessageManager();
-        if (sender instanceof Player) {
-            final Player player = (Player) sender;
-            if (args.length >= 1) {
-                final Guild guild = jda.getGuildById(plugin.getConfig().getString("server-id"));
-                if (guild != null) {
-                    Member member = null;
-                    try {
-                        member = guild.getMemberByTag(args[0]);
-                    } catch (Exception ignored) {
-                    }
-                    if (member != null) {
-                        final Member finalMember = member;
-                        member.getUser().openPrivateChannel().queue(privateChannel -> {
-                            privateChannel.sendMessage(messageManager.replacePlaceholders(messageManager.formatDiscord(Message.VERIFYREQUEST),
-                                    privateChannel.getUser().getAsTag(), sender.getName(), guild.getName())).queue();
-                            waiter.waitForEvent(PrivateMessageReceivedEvent.class, event -> event.getChannel().getId()
-                                    .equals(privateChannel.getId()) &&
-                                    !event.getMessage().getAuthor().isBot(), event -> {
-                                if (event.getMessage().getContentRaw().equalsIgnoreCase("yes")) {
+        if (!(sender instanceof Player)) {
+            sender.sendMessage(messageManager.format(Message.PLAYERONLY));
+            return true;
+        }
 
-                                        if (plugin.getPlayerCache().read().contains("verified." + player.getUniqueId().toString()) ||
-                                                finalMember.getRoles().contains(guild.getRoleById(plugin.getConfig().getString("role-id")))) {
+        if (!sender.hasPermission("donorrole.use")) {
+            sender.sendMessage(messageManager.format(Message.NOPERMCMD));
+            return true;
+        }
 
-                                            player.sendMessage(messageManager.replacePlaceholders(
-                                                    messageManager.format(Message.ALREADYVERIFIED),
-                                                    privateChannel.getUser().getAsTag(), sender.getName(), guild.getName()));
+        final Player player = (Player) sender;
 
-                                            privateChannel.sendMessage(messageManager.replacePlaceholders(
-                                                    messageManager.formatDiscord(Message.ALREADYVERIFIED),
-                                                    privateChannel.getUser().getAsTag(), sender.getName(), guild.getName())).queue();
+        if (args.length <= 1) {
+            sender.sendMessage(messageManager.usage(cmd));
+            return true;
+        }
 
-                                            return;
+        final Guild guild = jda.getGuildById(plugin.getConfig().getString("server-id"));
 
-                                        } else {
+        if (guild == null) {
 
-                                            plugin.getPlayerCache().read().set("verified." + player.getUniqueId().toString(),
-                                                    privateChannel.getUser().getId());
-                                            plugin.getPlayerCache().save(plugin);
+            sender.sendMessage(messageManager.format(Message.ERROR));
+            plugin.getLogger().severe(Message.INVALIDSERVERID.getMessage());
+            return true;
 
-                                        }
+        }
+        Member member = null;
+        try {
+            member = guild.getMemberByTag(args[0]);
+        } catch (Exception ignored) {
+        }
+        if (member == null) {
 
-                                        guild.addRoleToMember(finalMember,
-                                                Objects.requireNonNull(guild.getRoleById(plugin.getConfig().getString("role-id")))).queue();
+            sender.sendMessage(messageManager.replacePlaceholders(
+                    messageManager.format(Message.BADNAME),
+                    args[0], sender.getName(), guild.getName()));
 
-                                        sender.sendMessage(messageManager.replacePlaceholders(
-                                                messageManager.format(Message.VERIFIEDMINECRAFT),
-                                                privateChannel.getUser().getAsTag(), sender.getName(), guild.getName()));
+            return true;
+        }
+        final Member finalMember = member;
+        member.getUser().openPrivateChannel().queue(privateChannel -> {
 
-                                        privateChannel.sendMessage(messageManager.replacePlaceholders(
-                                                messageManager.formatDiscord(Message.VERIFIEDDISCORD),
-                                                privateChannel.getUser().getAsTag(), sender.getName(), guild.getName())).queue();
+            privateChannel.sendMessage(messageManager.replacePlaceholders(messageManager.formatDiscord(Message.VERIFYREQUEST),
+                    privateChannel.getUser().getAsTag(), sender.getName(), guild.getName())).queue();
+            waiter.waitForEvent(PrivateMessageReceivedEvent.class, event -> event.getChannel().getId()
+                    .equals(privateChannel.getId()) &&
+                    !event.getMessage().getAuthor().isBot(), event -> {
 
-                                    } else if (event.getMessage().getContentRaw().equalsIgnoreCase("no")) {
+                if (event.getMessage().getContentRaw().equalsIgnoreCase("yes")) {
+                    if (plugin.getPlayerCache().read().contains("verified." + player.getUniqueId().toString()) ||
+                            finalMember.getRoles().contains(guild.getRoleById(plugin.getConfig().getString("role-id")))) {
 
-                                        event.getChannel().sendMessage(messageManager.replacePlaceholders(
-                                                messageManager.formatDiscord(Message.DENIEDDISCORD),
-                                                privateChannel.getUser().getAsTag(), sender.getName(), guild.getName())).queue();
+                        player.sendMessage(messageManager.replacePlaceholders(
+                                messageManager.format(Message.ALREADYVERIFIED),
+                                privateChannel.getUser().getAsTag(), sender.getName(), guild.getName()));
 
-                                        sender.sendMessage(messageManager.replacePlaceholders(
-                                                messageManager.format(Message.DENIEDMINECRAFT),
-                                                privateChannel.getUser().getAsTag(), sender.getName(), guild.getName()));
+                        privateChannel.sendMessage(messageManager.replacePlaceholders(
+                                messageManager.formatDiscord(Message.ALREADYVERIFIED),
+                                privateChannel.getUser().getAsTag(), sender.getName(), guild.getName())).queue();
 
-                                    }
-
-                            }, plugin.getConfig().getInt("verifyTimeout"), TimeUnit.MINUTES, () -> {
-
-                                privateChannel.sendMessage(messageManager.replacePlaceholders(
-                                        messageManager.formatDiscord(Message.TOOLONGDISCORD),
-                                        privateChannel.getUser().getAsTag(), sender.getName(), guild.getName())).queue();
-
-                                sender.sendMessage(messageManager.replacePlaceholders(
-                                        messageManager.format(Message.TOOLONGMC),
-                                        privateChannel.getUser().getAsTag(), sender.getName(), guild.getName()));
-
-                            });
-                        });
+                        return;
 
                     } else {
 
-                        sender.sendMessage(messageManager.replacePlaceholders(
-                                messageManager.format(Message.BADNAME),
-                                args[0], sender.getName(), guild.getName()));
-                    }
-                } else {
+                        plugin.getPlayerCache().read().set("verified." + player.getUniqueId().toString(),
+                                privateChannel.getUser().getId());
+                        plugin.getPlayerCache().save(plugin);
 
-                    sender.sendMessage(messageManager.format(Message.ERROR));
-                    plugin.getLogger().severe(Message.INVALIDSERVERID.getMessage());
+                    }
+
+                    Map<String, Object> roles = plugin.getConfig().getConfigurationSection("roles").getValues(false);
+                    List<String> roleIDs = new ArrayList<>();
+                    int counter = 0;
+                    for (Map.Entry<String, Object> entry : roles.entrySet()) {
+                        String key = entry.getKey();
+                        Object value = entry.getValue();
+                        if (sender.hasPermission("donorrole.role." + key)) {
+                            roleIDs.set(counter, (String) value);
+                            counter++;
+                        }
+                    }
+
+                    for (String roleID : roleIDs) {
+                        Role role = guild.getRoleById(roleID);
+                        if (role == null) {
+                            return;
+                        }
+                        guild.addRoleToMember(finalMember, role).queue();
+                    }
+
+                    sender.sendMessage(messageManager.replacePlaceholders(
+                            messageManager.format(Message.VERIFIEDMINECRAFT),
+                            privateChannel.getUser().getAsTag(), sender.getName(), guild.getName()));
+
+                    privateChannel.sendMessage(messageManager.replacePlaceholders(
+                            messageManager.formatDiscord(Message.VERIFIEDDISCORD),
+                            privateChannel.getUser().getAsTag(), sender.getName(), guild.getName())).queue();
+
+                } else if (event.getMessage().getContentRaw().equalsIgnoreCase("no")) {
+
+                    event.getChannel().sendMessage(messageManager.replacePlaceholders(
+                            messageManager.formatDiscord(Message.DENIEDDISCORD),
+                            privateChannel.getUser().getAsTag(), sender.getName(), guild.getName())).queue();
+
+                    sender.sendMessage(messageManager.replacePlaceholders(
+                            messageManager.format(Message.DENIEDMINECRAFT),
+                            privateChannel.getUser().getAsTag(), sender.getName(), guild.getName()));
 
                 }
-                return true;
 
-            }
+            }, plugin.getConfig().getInt("verifyTimeout"), TimeUnit.MINUTES, () -> {
 
-            sender.sendMessage(messageManager.usage(cmd));
+                privateChannel.sendMessage(messageManager.replacePlaceholders(
+                        messageManager.formatDiscord(Message.TOOLONGDISCORD),
+                        privateChannel.getUser().getAsTag(), sender.getName(), guild.getName())).queue();
 
-        } else {
+                sender.sendMessage(messageManager.replacePlaceholders(
+                        messageManager.format(Message.TOOLONGMC),
+                        privateChannel.getUser().getAsTag(), sender.getName(), guild.getName()));
 
-            sender.sendMessage(messageManager.format(Message.PLAYERONLY));
+            });
 
-        }
+        });
+
         return true;
+
     }
 }
