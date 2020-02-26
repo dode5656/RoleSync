@@ -5,6 +5,7 @@ import io.github.dode5656.donorrole.storage.FileStorage;
 import io.github.dode5656.donorrole.utilities.MessageManager;
 import io.github.dode5656.donorrole.commands.ReloadCommand;
 import io.github.dode5656.donorrole.commands.DonorCommand;
+
 import java.io.File;
 import java.util.logging.Level;
 
@@ -15,8 +16,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import javax.security.auth.login.LoginException;
 
-public class DonorRole extends JavaPlugin
-{
+public class DonorRole extends JavaPlugin {
 
     private FileStorage playerCache;
     private FileStorage messages;
@@ -41,14 +41,12 @@ public class DonorRole extends JavaPlugin
             getLogger().severe(messageManager.defaultError("Bot Token"));
             getServer().getPluginManager().disablePlugin(this);
 
-        }
-        else if (getConfig().getString("server-id").equals("REPLACESERVERID")) {
+        } else if (getConfig().getString("server-id").equals("REPLACESERVERID")) {
 
             getLogger().severe(messageManager.defaultError("Server ID"));
             getServer().getPluginManager().disablePlugin(this);
 
-        }
-        else if (getConfig().getConfigurationSection("roles").getValues(false).containsValue("REPLACEROLEID")) {
+        } else if (getConfig().getConfigurationSection("roles").getValues(false).containsValue("REPLACEROLEID")) {
 
             getLogger().severe(messageManager.defaultError("a Role ID"));
             getServer().getPluginManager().disablePlugin(this);
@@ -68,13 +66,21 @@ public class DonorRole extends JavaPlugin
         jda.shutdown();
     }
 
-    public final FileStorage getMessages() { return messages; }
+    public final FileStorage getMessages() {
+        return messages;
+    }
 
-    public final FileStorage getPlayerCache() { return playerCache; }
+    public final FileStorage getPlayerCache() {
+        return playerCache;
+    }
 
-    public final MessageManager getMessageManager() { return messageManager; }
+    public final MessageManager getMessageManager() {
+        return messageManager;
+    }
 
-    public final JDA getJDA() { return jda; }
+    public final JDA getJDA() {
+        return jda;
+    }
 
     private void startBot() {
         try {

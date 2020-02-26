@@ -19,10 +19,9 @@ public enum Message {
     DEFAULTVALUE("messages.default-value"),
     CONFIGRELOADED("messages.config-reloaded"),
     CONFIGRELOADERROR("messages.config-reload-error"),
-    UPDATEDROLES("messages.updated-roles")
-
-    ;
+    UPDATEDROLES("messages.updated-roles");
     private String key;
+
     Message(String s) {
         this.key = s;
     }

@@ -8,19 +8,17 @@ import org.bukkit.command.CommandExecutor;
 
 import java.util.logging.Level;
 
-public class ReloadCommand implements CommandExecutor
-{
+public class ReloadCommand implements CommandExecutor {
     private DonorRole plugin;
-    
+
     public ReloadCommand(final DonorRole plugin) {
         this.plugin = plugin;
     }
-    
+
     public boolean onCommand(final CommandSender commandSender, final Command command, final String s, final String[] strings) {
         try {
             plugin.reloadConfig();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             plugin.getLogger().log(Level.SEVERE, "Error while trying to reload config" + e);
             commandSender.sendMessage(plugin.getMessageManager().format(Message.CONFIGRELOADERROR));
             return true;
