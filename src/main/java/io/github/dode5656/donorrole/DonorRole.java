@@ -26,34 +26,34 @@ public class DonorRole extends JavaPlugin {
     @Override
     public void onEnable() {
 
-        messageManager = new MessageManager(this);
+        saveDefaultConfig();
 
-        playerCache = new FileStorage("kits.yml", new File(getDataFolder().getPath()));
-        playerCache.saveDefaults(this);
+        playerCache = new FileStorage("playerCache.yml", new File(getDataFolder().getPath(), "cache"));
 
         messages = new FileStorage("messages.yml", new File(getDataFolder().getPath()));
         messages.saveDefaults(this);
-
-        saveDefaultConfig();
+        messageManager = new MessageManager(this);
 
         if (getConfig().getString("bot-token").equals("REPLACEBOTTOKEN")) {
 
             getLogger().severe(messageManager.defaultError("Bot Token"));
             getServer().getPluginManager().disablePlugin(this);
+            return;
 
         } else if (getConfig().getString("server-id").equals("REPLACESERVERID")) {
 
             getLogger().severe(messageManager.defaultError("Server ID"));
             getServer().getPluginManager().disablePlugin(this);
+            return;
 
         } else if (getConfig().getConfigurationSection("roles").getValues(false).containsValue("REPLACEROLEID")) {
 
             getLogger().severe(messageManager.defaultError("a Role ID"));
             getServer().getPluginManager().disablePlugin(this);
-
+            return;
         }
 
-        startBot();
+        if (!startBot()) { return; }
 
         getCommand("donor").setExecutor(new DonorCommand(this));
         getCommand("donorreload").setExecutor(new ReloadCommand(this));
@@ -63,7 +63,7 @@ public class DonorRole extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        jda.shutdown();
+        if (jda != null && jda.getStatus() == JDA.Status.CONNECTED) jda.shutdown();
     }
 
     public final FileStorage getMessages() {
@@ -82,12 +82,15 @@ public class DonorRole extends JavaPlugin {
         return jda;
     }
 
-    private void startBot() {
+    private boolean startBot() {
         try {
             this.jda = new JDABuilder(AccountType.BOT).setToken(getConfig().getString("bot-token")).build();
+            return true;
         } catch (LoginException e) {
-            getLogger().log(Level.SEVERE, "Error when logging in!", e);
+            getLogger().log(Level.SEVERE, "Error when logging in!");
             getServer().getPluginManager().disablePlugin(this);
         }
+
+        return false;
     }
 }

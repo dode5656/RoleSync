@@ -6,7 +6,7 @@ import org.bukkit.command.Command;
 import org.bukkit.configuration.file.FileConfiguration;
 
 public class MessageManager {
-    public String prefix;
+    private String prefix;
     private FileConfiguration messages;
 
     public MessageManager(DonorRole plugin) {
