@@ -1,7 +1,7 @@
 name: DonorRole
 version: 1.0.0
 author: dode5656
-main: io.github.dode5656.donorrole.DonorRole
+main: main.java.io.github.dode5656.donorrole.DonorRole
 description: Plugin that links discord and minecraft and gives roles to the user in the server's discord.
 commands:
   donor:

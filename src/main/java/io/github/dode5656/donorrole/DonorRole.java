@@ -2,13 +2,13 @@ package io.github.dode5656.donorrole;
 
 import io.github.dode5656.donorrole.events.JoinEvent;
 import io.github.dode5656.donorrole.storage.FileStorage;
-import io.github.dode5656.donorrole.utilities.MessageManager;
 import io.github.dode5656.donorrole.commands.ReloadCommand;
 import io.github.dode5656.donorrole.commands.DonorCommand;
 
 import java.io.File;
 import java.util.logging.Level;
 
+import io.github.dode5656.donorrole.utilities.MessageManager;
 import net.dv8tion.jda.api.AccountType;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
