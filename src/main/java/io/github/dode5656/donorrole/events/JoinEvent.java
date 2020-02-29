@@ -52,15 +52,19 @@ public class JoinEvent implements Listener {
 
             Map<String, Object> roles = plugin.getConfig().getConfigurationSection("roles").getValues(false);
             List<String> roleIDs = new ArrayList<>();
+            List<String> removed = new ArrayList<>();
             for (Map.Entry<String, Object> entry : roles.entrySet()) {
                 String key = entry.getKey();
                 Object value = entry.getValue();
                 if (player.hasPermission("donorrole.role." + key) && !memberRoles.contains(guild.getRoleById((String) value))) {
                     roleIDs.add((String) value);
+                } else if (!player.hasPermission("donorrole.role." + key) && memberRoles.contains(guild.getRoleById((String) value))) {
+                    removed.add((String) value);
                 }
+
             }
 
-            if (roleIDs.isEmpty()) return;
+            if (roleIDs.isEmpty() && removed.isEmpty()) return;
 
             for (String roleID : roleIDs) {
                 Role role = guild.getRoleById(roleID);
@@ -68,6 +72,12 @@ public class JoinEvent implements Listener {
                     continue;
                 }
                 guild.addRoleToMember(member, role).queue();
+            }
+
+            for (String roleID: removed) {
+                Role role = guild.getRoleById(roleID);
+                if (role == null) continue;
+                guild.removeRoleFromMember(member, role).queue();
             }
 
             player.sendMessage(messageManager.format(Message.UPDATEDROLES));
