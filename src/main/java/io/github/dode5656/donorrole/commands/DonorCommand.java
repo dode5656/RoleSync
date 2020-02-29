@@ -133,7 +133,7 @@ public class DonorCommand implements CommandExecutor {
                     for (String roleID : roleIDs) {
                         Role role = guild.getRoleById(roleID);
                         if (role == null) {
-                            return;
+                            continue;
                         }
                         guild.addRoleToMember(finalMember, role).queue();
                     }
