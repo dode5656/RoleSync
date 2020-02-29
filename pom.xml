@@ -6,6 +6,7 @@
 
     <groupId>io.github.dode5656</groupId>
     <artifactId>DonorRole</artifactId>
+    <packaging>pom</packaging>
     <version>1.1</version>
 
     <properties>

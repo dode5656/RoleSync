@@ -121,7 +121,7 @@ public class DonorCommand implements CommandExecutor {
                     }
 
                     Map<String, Object> roles = plugin.getConfig().getConfigurationSection("roles").getValues(false);
-                    List<String> roleIDs = new ArrayList<String>(){};
+                    List<String> roleIDs = new ArrayList<>();
                     for (Map.Entry<String, Object> entry : roles.entrySet()) {
                         String key = entry.getKey();
                         Object value = entry.getValue();
