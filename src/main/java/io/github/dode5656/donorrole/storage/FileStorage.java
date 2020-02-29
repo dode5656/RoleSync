@@ -11,10 +11,11 @@ import java.util.logging.Logger;
 
 public class FileStorage {
     private File file;
-    private YamlConfiguration fileStorage;
+    private FileConfiguration fileStorage;
 
     public FileStorage(String name, File location) {
         this.file = new File(location, name);
+        reload();
     }
 
     public final void save(DonorRole main) {

@@ -17,3 +17,4 @@ messages:
   config-reloaded: "Config file reloaded successfully!"
   config-reload-error: "Error while trying to reload config, see error in the console."
   updated-roles: "Updated your roles in discord successfully!"
+  no-perm-cmd: "You don't have permission to run this command!"

@@ -13,6 +13,7 @@ import java.util.concurrent.TimeUnit;
 
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.events.message.priv.PrivateMessageReceivedEvent;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -47,7 +48,7 @@ public class DonorCommand implements CommandExecutor {
 
         final Player player = (Player) sender;
 
-        if (args.length <= 1) {
+        if (args.length < 1) {
             sender.sendMessage(messageManager.usage(cmd));
             return true;
         }
@@ -84,36 +85,48 @@ public class DonorCommand implements CommandExecutor {
                     !event.getMessage().getAuthor().isBot(), event -> {
 
                 if (event.getMessage().getContentRaw().equalsIgnoreCase("yes")) {
-                    if (plugin.getPlayerCache().read().contains("verified." + player.getUniqueId().toString()) ||
-                            finalMember.getRoles().contains(guild.getRoleById(plugin.getConfig().getString("role-id")))) {
+                    if (plugin.getPlayerCache().read() != null && plugin.getPlayerCache().read().contains("verified." + player.getUniqueId().toString())) {
+                        boolean result = false;
+                        for ( Map.Entry<String, Object> entry : plugin.getConfig().getConfigurationSection("roles").getValues(false).entrySet()) {
+                            Object value = entry.getValue();
+                            Role role = guild.getRoleById((String) value);
+                            if (role == null) {
+                                continue;
+                            }
+                            if(finalMember.getRoles().contains(role)) {
+                                result = true;
+                            }
+                        }
+                        if (result) {
+                            player.sendMessage(messageManager.replacePlaceholders(
+                                    messageManager.format(Message.ALREADYVERIFIED),
+                                    privateChannel.getUser().getAsTag(), sender.getName(), guild.getName()));
 
-                        player.sendMessage(messageManager.replacePlaceholders(
-                                messageManager.format(Message.ALREADYVERIFIED),
-                                privateChannel.getUser().getAsTag(), sender.getName(), guild.getName()));
-
-                        privateChannel.sendMessage(messageManager.replacePlaceholders(
-                                messageManager.formatDiscord(Message.ALREADYVERIFIED),
-                                privateChannel.getUser().getAsTag(), sender.getName(), guild.getName())).queue();
-
-                        return;
+                            privateChannel.sendMessage(messageManager.replacePlaceholders(
+                                    messageManager.formatDiscord(Message.ALREADYVERIFIED),
+                                    privateChannel.getUser().getAsTag(), sender.getName(), guild.getName())).queue();
+                            return;
+                        }
 
                     } else {
+                        FileConfiguration playerCache = plugin.getPlayerCache().read();
+                        if (playerCache != null) {
+                            playerCache.set("verified." + player.getUniqueId().toString(),
+                                    privateChannel.getUser().getId());
+                        }
 
-                        plugin.getPlayerCache().read().set("verified." + player.getUniqueId().toString(),
-                                privateChannel.getUser().getId());
                         plugin.getPlayerCache().save(plugin);
+                        plugin.getPlayerCache().reload();
 
                     }
 
                     Map<String, Object> roles = plugin.getConfig().getConfigurationSection("roles").getValues(false);
-                    List<String> roleIDs = new ArrayList<>();
-                    int counter = 0;
+                    List<String> roleIDs = new ArrayList<String>(){};
                     for (Map.Entry<String, Object> entry : roles.entrySet()) {
                         String key = entry.getKey();
                         Object value = entry.getValue();
                         if (sender.hasPermission("donorrole.role." + key)) {
-                            roleIDs.set(counter, (String) value);
-                            counter++;
+                            roleIDs.add((String) value);
                         }
                     }
 
@@ -138,7 +151,6 @@ public class DonorCommand implements CommandExecutor {
                     event.getChannel().sendMessage(messageManager.replacePlaceholders(
                             messageManager.formatDiscord(Message.DENIEDDISCORD),
                             privateChannel.getUser().getAsTag(), sender.getName(), guild.getName())).queue();
-
                     sender.sendMessage(messageManager.replacePlaceholders(
                             messageManager.format(Message.DENIEDMINECRAFT),
                             privateChannel.getUser().getAsTag(), sender.getName(), guild.getName()));

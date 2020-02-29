@@ -11,7 +11,7 @@ public class MessageManager {
 
     public MessageManager(DonorRole plugin) {
         messages = plugin.getMessages().read();
-        prefix = plugin.getConfig().getString(Message.PREFIX.getMessage()) + " ";
+        prefix = color(plugin.getConfig().getString(Message.PREFIX.getMessage()) + " ");
     }
 
     public final String color(String message) {
@@ -30,16 +30,10 @@ public class MessageManager {
         return prefix + color(this.messages.getString(msg.getMessage()));
     }
 
-    public final String formatDiscord(String msg) {
-        return prefix + color(msg);
-    }
-
-    public final String formatDiscord(Message msg) {
-        return prefix + color(this.messages.getString(msg.getMessage()));
-    }
+    public final String formatDiscord(Message msg) { return this.messages.getString(msg.getMessage()); }
 
     public final String replacePlaceholders(String msg, String discordTag, String playerName, String guildName) {
-        return prefix + color(msg
+        return color(msg
                 .replaceAll("\\{discord_tag}", discordTag)
                 .replaceAll("\\{player_name}", playerName)
                 .replaceAll("\\{discord_server_name}", guildName));

@@ -31,6 +31,7 @@ public class JoinEvent implements Listener {
         FileConfiguration playerCache = plugin.getPlayerCache().read();
         MessageManager messageManager = plugin.getMessageManager();
 
+        if (playerCache == null) return;
         if (playerCache.contains("verified." + player.getUniqueId().toString())) {
             Guild guild = jda.getGuildById(plugin.getConfig().getString("server-id"));
 
@@ -50,15 +51,12 @@ public class JoinEvent implements Listener {
             List<Role> memberRoles = member.getRoles();
 
             Map<String, Object> roles = plugin.getConfig().getConfigurationSection("roles").getValues(false);
-            List<String> roleIDs = new ArrayList<String>() {
-            };
-            int counter = 0;
+            List<String> roleIDs = new ArrayList<>();
             for (Map.Entry<String, Object> entry : roles.entrySet()) {
                 String key = entry.getKey();
                 Object value = entry.getValue();
                 if (player.hasPermission("donorrole.role." + key) && !memberRoles.contains(guild.getRoleById((String) value))) {
-                    roleIDs.set(counter, (String) value);
-                    counter++;
+                    roleIDs.add((String) value);
                 }
             }
 

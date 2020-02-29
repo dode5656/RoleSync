@@ -5,8 +5,8 @@ server-id: "REPLACESERVERID"
 
 # Place here the discord role IDs of the roles that you want to give players
 roles:
-  - Donor: "REPLACEROLEID"
-  - Iron: "REPLACEROLEID"
+  Donor: "REPLACEROLEID"
+  Iron: "REPLACEROLEID"
 
 # Place here the prefix you want the plugin to use. No need to add a space at the end.
 prefix: "&6[&r&eDonorRole&6]&2"

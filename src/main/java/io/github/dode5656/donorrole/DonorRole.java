@@ -47,7 +47,6 @@ public class DonorRole extends JavaPlugin {
             return;
 
         } else if (getConfig().getConfigurationSection("roles").getValues(false).containsValue("REPLACEROLEID")) {
-
             getLogger().severe(messageManager.defaultError("a Role ID"));
             getServer().getPluginManager().disablePlugin(this);
             return;
@@ -85,6 +84,7 @@ public class DonorRole extends JavaPlugin {
     private boolean startBot() {
         try {
             this.jda = new JDABuilder(AccountType.BOT).setToken(getConfig().getString("bot-token")).build();
+
             return true;
         } catch (LoginException e) {
             getLogger().log(Level.SEVERE, "Error when logging in!");
