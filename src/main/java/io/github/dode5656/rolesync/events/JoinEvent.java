@@ -1,8 +1,9 @@
-package io.github.dode5656.donorrole.events;
+package io.github.dode5656.rolesync.events;
 
-import io.github.dode5656.donorrole.DonorRole;
-import io.github.dode5656.donorrole.utilities.Message;
-import io.github.dode5656.donorrole.utilities.MessageManager;
+import io.github.dode5656.rolesync.RoleSync;
+import io.github.dode5656.rolesync.utilities.Message;
+import io.github.dode5656.rolesync.utilities.MessageManager;
+import io.github.dode5656.rolesync.utilities.PluginStatus;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
@@ -18,14 +19,15 @@ import java.util.List;
 import java.util.Map;
 
 public class JoinEvent implements Listener {
-    private DonorRole plugin;
+    private RoleSync plugin;
 
-    public JoinEvent(DonorRole plugin) {
+    public JoinEvent(RoleSync plugin) {
         this.plugin = plugin;
     }
 
     @EventHandler
     public void onJoin(PlayerJoinEvent e) {
+        if (plugin.getPluginStatus() == PluginStatus.DISABLED) return;
         JDA jda = plugin.getJDA();
         Player player = e.getPlayer();
         FileConfiguration playerCache = plugin.getPlayerCache().read();
@@ -38,7 +40,7 @@ public class JoinEvent implements Listener {
             if (guild == null) {
 
                 player.sendMessage(messageManager.format(Message.ERROR));
-                plugin.getLogger().severe(Message.INVALIDSERVERID.getMessage());
+                plugin.getLogger().severe(Message.INVALID_SERVER_ID.getMessage());
 
                 return;
 
@@ -56,9 +58,9 @@ public class JoinEvent implements Listener {
             for (Map.Entry<String, Object> entry : roles.entrySet()) {
                 String key = entry.getKey();
                 Object value = entry.getValue();
-                if (player.hasPermission("donorrole.role." + key) && !memberRoles.contains(guild.getRoleById((String) value))) {
+                if (player.hasPermission("rolesync.role." + key) && !memberRoles.contains(guild.getRoleById((String) value))) {
                     roleIDs.add((String) value);
-                } else if (!player.hasPermission("donorrole.role." + key) && memberRoles.contains(guild.getRoleById((String) value))) {
+                } else if (!player.hasPermission("rolesync.role." + key) && memberRoles.contains(guild.getRoleById((String) value))) {
                     removed.add((String) value);
                 }
 
@@ -80,7 +82,7 @@ public class JoinEvent implements Listener {
                 guild.removeRoleFromMember(member, role).queue();
             }
 
-            player.sendMessage(messageManager.format(Message.UPDATEDROLES));
+            player.sendMessage(messageManager.format(Message.UPDATED_ROLES));
         }
 
     }

@@ -1,26 +1,22 @@
-name: DonorRole
+name: RoleSync
 version: 1.1.0
 author: dode5656
-main: io.github.dode5656.donorrole.DonorRole
+main: io.github.dode5656.rolesync.RoleSync
 description: Plugin that links discord and minecraft and gives roles to the user in the server's discord.
 commands:
-  donor:
-    permission: donorrole.use
+  sync:
+    permission: rolesync.use
     permission-message: You don't have enough permissions to use this command!
-    description: Gives the user his donor role in discord if he has a rank in the server.
+    description: Gives the user role(s) in discord if they have the permission(s) in the server.
     usage: /<command> <discordname> - Don't forget to add the numbers after the \#.
-  donorreload:
-    permission: donorrole.reload
+  rolesyncreload:
+    permission: rolesync.reload
     permission-message: You don't have enough permissions to use this command!
-    description: Reloads the DonorRole config.
+    description: Reloads the RoleSync config.
     usage: /<command>
-    aliases: ['dreload']
+    aliases: ['rreload', 'sreload', 'syncreload']
 permissions:
-  donorrole.*:
-    description: Gives access to all DonorRole commands
-  donorrole.use:
-    description: Gives access to use the /donor command to get verified in discord server.
-  donorrole.reload:
+  rolesync.use:
+    description: Gives access to use the /sync command to get verified in discord server.
+  rolesync.reload:
     description: Gives access to reload the config of the plugin
-  donorrole.role.*:
-    description: When doing /donor, it gives the role with the same name as in the config.

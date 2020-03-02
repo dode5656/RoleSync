@@ -1,7 +1,7 @@
-# DonorRole
+# RoleSync
  
 Want to make your players verify their discord account with your server? You came to the right place!
 
-DonorRole is a plugin that allows you to connect your discord server and minecraft server. Player can just run /donor command and get themselves a role in the discord server.
+RoleSync is a plugin that allows you to connect your discord server and minecraft server. Player can just run /sync command and get themselves role(s) in the discord server depending on their permissions.
 
 This is my first plugin so bear with me.

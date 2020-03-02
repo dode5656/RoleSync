@@ -9,7 +9,7 @@ roles:
   Iron: "REPLACEROLEID"
 
 # Place here the prefix you want the plugin to use. No need to add a space at the end.
-prefix: "&6[&r&eDonorRole&6]&2"
+prefix: "&6[&r&eRoleSync&6]&2"
 
 # Time till verify request times out when no one answers. Put -1 if you want no timeout. IN MINUTES
 verifyTimeout: 2

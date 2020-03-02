@@ -1,6 +1,6 @@
-package io.github.dode5656.donorrole.utilities;
+package io.github.dode5656.rolesync.utilities;
 
-import io.github.dode5656.donorrole.DonorRole;
+import io.github.dode5656.rolesync.RoleSync;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -9,7 +9,7 @@ public class MessageManager {
     private String prefix;
     private FileConfiguration messages;
 
-    public MessageManager(DonorRole plugin) {
+    public MessageManager(RoleSync plugin) {
         messages = plugin.getMessages().read();
         prefix = color(plugin.getConfig().getString(Message.PREFIX.getMessage()) + " ");
     }
@@ -26,9 +26,7 @@ public class MessageManager {
         return prefix + color(msg);
     }
 
-    public final String format(Message msg) {
-        return prefix + color(this.messages.getString(msg.getMessage()));
-    }
+    public final String format(Message msg) { return format(this.messages.getString(msg.getMessage())); }
 
     public final String formatDiscord(Message msg) { return this.messages.getString(msg.getMessage()); }
 
@@ -40,6 +38,6 @@ public class MessageManager {
     }
 
     public final String defaultError(String value) {
-        return this.messages.getString(Message.DEFAULTVALUE.getMessage()).replaceAll("\\{value}", value);
+        return this.messages.getString(Message.DEFAULT_VALUE.getMessage()).replaceAll("\\{value}", value);
     }
 }

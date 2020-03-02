@@ -1,33 +1,33 @@
-package io.github.dode5656.donorrole.commands;
+package io.github.dode5656.rolesync.commands;
 
 
-import io.github.dode5656.donorrole.utilities.Message;
-import io.github.dode5656.donorrole.utilities.MessageManager;
-import net.dv8tion.jda.api.entities.Member;
+import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
+import io.github.dode5656.rolesync.RoleSync;
+import io.github.dode5656.rolesync.utilities.Message;
+import io.github.dode5656.rolesync.utilities.MessageManager;
+import io.github.dode5656.rolesync.utilities.PluginStatus;
+import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.Role;
+import net.dv8tion.jda.api.events.message.priv.PrivateMessageReceivedEvent;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandExecutor;
+import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-import net.dv8tion.jda.api.entities.Role;
-import net.dv8tion.jda.api.events.message.priv.PrivateMessageReceivedEvent;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.entity.Player;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandSender;
-import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
-import net.dv8tion.jda.api.JDA;
-import io.github.dode5656.donorrole.DonorRole;
-import org.bukkit.command.CommandExecutor;
-
-public class DonorCommand implements CommandExecutor {
-    private DonorRole plugin;
+public class SyncCommand implements CommandExecutor {
+    private RoleSync plugin;
     private EventWaiter waiter;
     private JDA jda;
 
-    public DonorCommand(final DonorRole plugin) {
+    public SyncCommand(final RoleSync plugin) {
         this.waiter = new EventWaiter();
         this.plugin = plugin;
         this.jda = plugin.getJDA();
@@ -36,13 +36,17 @@ public class DonorCommand implements CommandExecutor {
 
     public boolean onCommand(final CommandSender sender, final Command cmd, final String label, final String[] args) {
         MessageManager messageManager = plugin.getMessageManager();
+        if (plugin.getPluginStatus() == PluginStatus.DISABLED) {
+            sender.sendMessage(messageManager.format(Message.PLUGIN_DISABLED));
+            return true;
+        }
         if (!(sender instanceof Player)) {
-            sender.sendMessage(messageManager.format(Message.PLAYERONLY));
+            sender.sendMessage(messageManager.format(Message.PLAYER_ONLY));
             return true;
         }
 
-        if (!sender.hasPermission("donorrole.use")) {
-            sender.sendMessage(messageManager.format(Message.NOPERMCMD));
+        if (!sender.hasPermission("rolesync.use")) {
+            sender.sendMessage(messageManager.format(Message.NO_PERM_CMD));
             return true;
         }
 
@@ -58,7 +62,7 @@ public class DonorCommand implements CommandExecutor {
         if (guild == null) {
 
             sender.sendMessage(messageManager.format(Message.ERROR));
-            plugin.getLogger().severe(Message.INVALIDSERVERID.getMessage());
+            plugin.getLogger().severe(Message.INVALID_SERVER_ID.getMessage());
             return true;
 
         }
@@ -70,7 +74,7 @@ public class DonorCommand implements CommandExecutor {
         if (member == null) {
 
             sender.sendMessage(messageManager.replacePlaceholders(
-                    messageManager.format(Message.BADNAME),
+                    messageManager.format(Message.BAD_NAME),
                     args[0], sender.getName(), guild.getName()));
 
             return true;
@@ -78,7 +82,7 @@ public class DonorCommand implements CommandExecutor {
         final Member finalMember = member;
         member.getUser().openPrivateChannel().queue(privateChannel -> {
 
-            privateChannel.sendMessage(messageManager.replacePlaceholders(messageManager.formatDiscord(Message.VERIFYREQUEST),
+            privateChannel.sendMessage(messageManager.replacePlaceholders(messageManager.formatDiscord(Message.VERIFY_REQUEST),
                     privateChannel.getUser().getAsTag(), sender.getName(), guild.getName())).queue();
             waiter.waitForEvent(PrivateMessageReceivedEvent.class, event -> event.getChannel().getId()
                     .equals(privateChannel.getId()) &&
@@ -99,11 +103,11 @@ public class DonorCommand implements CommandExecutor {
                         }
                         if (result) {
                             player.sendMessage(messageManager.replacePlaceholders(
-                                    messageManager.format(Message.ALREADYVERIFIED),
+                                    messageManager.format(Message.ALREADY_VERIFIED),
                                     privateChannel.getUser().getAsTag(), sender.getName(), guild.getName()));
 
                             privateChannel.sendMessage(messageManager.replacePlaceholders(
-                                    messageManager.formatDiscord(Message.ALREADYVERIFIED),
+                                    messageManager.formatDiscord(Message.ALREADY_VERIFIED),
                                     privateChannel.getUser().getAsTag(), sender.getName(), guild.getName())).queue();
                             return;
                         }
@@ -125,7 +129,7 @@ public class DonorCommand implements CommandExecutor {
                     for (Map.Entry<String, Object> entry : roles.entrySet()) {
                         String key = entry.getKey();
                         Object value = entry.getValue();
-                        if (sender.hasPermission("donorrole.role." + key)) {
+                        if (sender.hasPermission("rolesync.role." + key)) {
                             roleIDs.add((String) value);
                         }
                     }
@@ -139,20 +143,20 @@ public class DonorCommand implements CommandExecutor {
                     }
 
                     sender.sendMessage(messageManager.replacePlaceholders(
-                            messageManager.format(Message.VERIFIEDMINECRAFT),
+                            messageManager.format(Message.VERIFIED_MINECRAFT),
                             privateChannel.getUser().getAsTag(), sender.getName(), guild.getName()));
 
                     privateChannel.sendMessage(messageManager.replacePlaceholders(
-                            messageManager.formatDiscord(Message.VERIFIEDDISCORD),
+                            messageManager.formatDiscord(Message.VERIFIED_DISCORD),
                             privateChannel.getUser().getAsTag(), sender.getName(), guild.getName())).queue();
 
                 } else if (event.getMessage().getContentRaw().equalsIgnoreCase("no")) {
 
                     event.getChannel().sendMessage(messageManager.replacePlaceholders(
-                            messageManager.formatDiscord(Message.DENIEDDISCORD),
+                            messageManager.formatDiscord(Message.DENIED_DISCORD),
                             privateChannel.getUser().getAsTag(), sender.getName(), guild.getName())).queue();
                     sender.sendMessage(messageManager.replacePlaceholders(
-                            messageManager.format(Message.DENIEDMINECRAFT),
+                            messageManager.format(Message.DENIED_MINECRAFT),
                             privateChannel.getUser().getAsTag(), sender.getName(), guild.getName()));
 
                 }
@@ -160,11 +164,11 @@ public class DonorCommand implements CommandExecutor {
             }, plugin.getConfig().getInt("verifyTimeout"), TimeUnit.MINUTES, () -> {
 
                 privateChannel.sendMessage(messageManager.replacePlaceholders(
-                        messageManager.formatDiscord(Message.TOOLONGDISCORD),
+                        messageManager.formatDiscord(Message.TOO_LONG_DISCORD),
                         privateChannel.getUser().getAsTag(), sender.getName(), guild.getName())).queue();
 
                 sender.sendMessage(messageManager.replacePlaceholders(
-                        messageManager.format(Message.TOOLONGMC),
+                        messageManager.format(Message.TOO_LONG_MC),
                         privateChannel.getUser().getAsTag(), sender.getName(), guild.getName()));
 
             });

@@ -1,30 +1,31 @@
-package io.github.dode5656.donorrole;
+package io.github.dode5656.rolesync;
 
-import io.github.dode5656.donorrole.events.JoinEvent;
-import io.github.dode5656.donorrole.storage.FileStorage;
-import io.github.dode5656.donorrole.commands.ReloadCommand;
-import io.github.dode5656.donorrole.commands.DonorCommand;
-
-import java.io.File;
-import java.util.logging.Level;
-
-import io.github.dode5656.donorrole.utilities.MessageManager;
+import io.github.dode5656.rolesync.commands.ReloadCommand;
+import io.github.dode5656.rolesync.commands.SyncCommand;
+import io.github.dode5656.rolesync.events.JoinEvent;
+import io.github.dode5656.rolesync.storage.FileStorage;
+import io.github.dode5656.rolesync.utilities.MessageManager;
+import io.github.dode5656.rolesync.utilities.PluginStatus;
 import net.dv8tion.jda.api.AccountType;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import javax.security.auth.login.LoginException;
+import java.io.File;
+import java.util.logging.Level;
 
-public class DonorRole extends JavaPlugin {
+public class RoleSync extends JavaPlugin {
 
     private FileStorage playerCache;
     private FileStorage messages;
     private MessageManager messageManager;
     private JDA jda;
+    private PluginStatus pluginStatus;
 
     @Override
     public void onEnable() {
+        pluginStatus = PluginStatus.ENABLED;
 
         saveDefaultConfig();
 
@@ -37,24 +38,24 @@ public class DonorRole extends JavaPlugin {
         if (getConfig().getString("bot-token").equals("REPLACEBOTTOKEN")) {
 
             getLogger().severe(messageManager.defaultError("Bot Token"));
-            getServer().getPluginManager().disablePlugin(this);
+            disablePlugin();
             return;
 
         } else if (getConfig().getString("server-id").equals("REPLACESERVERID")) {
 
             getLogger().severe(messageManager.defaultError("Server ID"));
-            getServer().getPluginManager().disablePlugin(this);
+            disablePlugin();
             return;
 
         } else if (getConfig().getConfigurationSection("roles").getValues(false).containsValue("REPLACEROLEID")) {
             getLogger().severe(messageManager.defaultError("a Role ID"));
-            getServer().getPluginManager().disablePlugin(this);
+            disablePlugin();
             return;
         }
 
         if (!startBot()) { return; }
 
-        getCommand("donor").setExecutor(new DonorCommand(this));
+        getCommand("donor").setExecutor(new SyncCommand(this));
         getCommand("donorreload").setExecutor(new ReloadCommand(this));
         getServer().getPluginManager().registerEvents(new JoinEvent(this), this);
 
@@ -81,6 +82,14 @@ public class DonorRole extends JavaPlugin {
         return jda;
     }
 
+    public PluginStatus getPluginStatus() {
+        return pluginStatus;
+    }
+
+    public void setPluginStatus(PluginStatus pluginStatus) {
+        this.pluginStatus = pluginStatus;
+    }
+
     private boolean startBot() {
         try {
             this.jda = new JDABuilder(AccountType.BOT).setToken(getConfig().getString("bot-token")).build();
@@ -92,5 +101,9 @@ public class DonorRole extends JavaPlugin {
         }
 
         return false;
+    }
+
+    private void disablePlugin() {
+        pluginStatus = PluginStatus.DISABLED;
     }
 }

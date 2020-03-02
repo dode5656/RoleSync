@@ -1,6 +1,6 @@
-package io.github.dode5656.donorrole.storage;
+package io.github.dode5656.rolesync.storage;
 
-import io.github.dode5656.donorrole.DonorRole;
+import io.github.dode5656.rolesync.RoleSync;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -18,7 +18,7 @@ public class FileStorage {
         reload();
     }
 
-    public final void save(DonorRole main) {
+    public final void save(RoleSync main) {
         Logger logger = main.getLogger();
         try {
             fileStorage.save(file);
@@ -35,7 +35,7 @@ public class FileStorage {
         this.fileStorage = YamlConfiguration.loadConfiguration(this.file);
     }
 
-    public final void saveDefaults(DonorRole main) {
+    public final void saveDefaults(RoleSync main) {
         if (this.file.exists()) {
             reload();
             return;
