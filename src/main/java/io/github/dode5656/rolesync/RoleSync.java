@@ -50,7 +50,11 @@ public class RoleSync extends JavaPlugin {
             disablePlugin();
         }
 
-        if (!startBot()) { return; }
+        if (pluginStatus == PluginStatus.ENABLED) {
+            if (!startBot()) {
+                return;
+            }
+        }
 
         getCommand("donor").setExecutor(new SyncCommand(this));
         getCommand("donorreload").setExecutor(new ReloadCommand(this));
@@ -94,7 +98,7 @@ public class RoleSync extends JavaPlugin {
             return true;
         } catch (LoginException e) {
             getLogger().log(Level.SEVERE, "Error when logging in!");
-            getServer().getPluginManager().disablePlugin(this);
+            disablePlugin();
         }
 
         return false;
