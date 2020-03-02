@@ -28,10 +28,12 @@ public class SyncCommand implements CommandExecutor {
     private JDA jda;
 
     public SyncCommand(final RoleSync plugin) {
-        this.waiter = new EventWaiter();
-        this.plugin = plugin;
-        this.jda = plugin.getJDA();
-        this.jda.addEventListener(this.waiter);
+        if (plugin.getPluginStatus() == PluginStatus.ENABLED) {
+            this.waiter = new EventWaiter();
+            this.plugin = plugin;
+            this.jda = plugin.getJDA();
+            this.jda.addEventListener(this.waiter);
+        }
     }
 
     public boolean onCommand(final CommandSender sender, final Command cmd, final String label, final String[] args) {
