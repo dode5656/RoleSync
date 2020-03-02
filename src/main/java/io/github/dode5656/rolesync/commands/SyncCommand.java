@@ -28,9 +28,9 @@ public class SyncCommand implements CommandExecutor {
     private JDA jda;
 
     public SyncCommand(final RoleSync plugin) {
+        this.plugin = plugin;
         if (plugin.getPluginStatus() == PluginStatus.ENABLED) {
             this.waiter = new EventWaiter();
-            this.plugin = plugin;
             this.jda = plugin.getJDA();
             this.jda.addEventListener(this.waiter);
         }
