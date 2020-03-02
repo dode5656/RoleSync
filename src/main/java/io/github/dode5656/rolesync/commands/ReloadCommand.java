@@ -24,13 +24,13 @@ public class ReloadCommand implements CommandExecutor {
         }
         try {
             plugin.reloadConfig();
+            if (plugin.getPluginStatus() == PluginStatus.DISABLED) plugin.setPluginStatus(PluginStatus.ENABLED);
             plugin.startBot();
         } catch (Exception e) {
             plugin.getLogger().log(Level.SEVERE, "Error while trying to reload config" + e);
             commandSender.sendMessage(plugin.getMessageManager().format(Message.CONFIG_RELOAD_ERROR));
             return true;
         }
-        if (plugin.getPluginStatus() == PluginStatus.DISABLED) plugin.setPluginStatus(PluginStatus.ENABLED);
         commandSender.sendMessage(plugin.getMessageManager().format(Message.CONFIG_RELOADED));
         return true;
     }
