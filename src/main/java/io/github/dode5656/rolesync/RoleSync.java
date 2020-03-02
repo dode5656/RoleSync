@@ -87,7 +87,7 @@ public class RoleSync extends JavaPlugin {
         this.pluginStatus = pluginStatus;
     }
 
-    private void startBot() {
+    public void startBot() {
         try {
             this.jda = new JDABuilder(AccountType.BOT).setToken(getConfig().getString("bot-token")).build();
         } catch (LoginException e) {
