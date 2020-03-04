@@ -42,8 +42,8 @@ public class RoleSync extends JavaPlugin {
 
         startBot();
 
-        getCommand("donor").setExecutor(new SyncCommand(this));
-        getCommand("donorreload").setExecutor(new ReloadCommand(this));
+        getCommand("sync").setExecutor(new SyncCommand(this));
+        getCommand("syncreload").setExecutor(new ReloadCommand(this));
         getServer().getPluginManager().registerEvents(new JoinEvent(this), this);
 
     }
