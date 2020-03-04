@@ -4,7 +4,7 @@ import io.github.dode5656.rolesync.RoleSync;
 
 public class ConfigChecker {
 
-    RoleSync plugin;
+    private final RoleSync plugin;
 
     public ConfigChecker(RoleSync plugin) {
         this.plugin = plugin;

@@ -23,7 +23,7 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 public class SyncCommand implements CommandExecutor {
-    private RoleSync plugin;
+    private final RoleSync plugin;
     private EventWaiter waiter;
     private JDA jda;
 

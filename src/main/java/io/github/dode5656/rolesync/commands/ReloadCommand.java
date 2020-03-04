@@ -11,7 +11,7 @@ import org.bukkit.entity.Player;
 import java.util.logging.Level;
 
 public class ReloadCommand implements CommandExecutor {
-    private RoleSync plugin;
+    private final RoleSync plugin;
 
     public ReloadCommand(final RoleSync plugin) {
         this.plugin = plugin;

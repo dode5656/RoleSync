@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.Map;
 
 public class JoinEvent implements Listener {
-    private RoleSync plugin;
+    private final RoleSync plugin;
 
     public JoinEvent(RoleSync plugin) {
         this.plugin = plugin;
