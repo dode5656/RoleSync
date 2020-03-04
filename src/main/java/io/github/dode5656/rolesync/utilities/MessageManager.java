@@ -6,8 +6,8 @@ import org.bukkit.command.Command;
 import org.bukkit.configuration.file.FileConfiguration;
 
 public class MessageManager {
-    private String prefix;
-    private FileConfiguration messages;
+    private final String prefix;
+    private final FileConfiguration messages;
 
     public MessageManager(RoleSync plugin) {
         messages = plugin.getMessages().read();
