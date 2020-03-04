@@ -37,6 +37,7 @@ public class RoleSync extends JavaPlugin {
         messages.saveDefaults(this);
         messageManager = new MessageManager(this);
 
+        configChecker = new ConfigChecker(this);
         configChecker.checkDefaults();
 
         startBot();
