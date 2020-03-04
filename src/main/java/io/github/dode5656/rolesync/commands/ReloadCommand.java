@@ -1,6 +1,7 @@
 package io.github.dode5656.rolesync.commands;
 
 import io.github.dode5656.rolesync.RoleSync;
+import io.github.dode5656.rolesync.events.JoinEvent;
 import io.github.dode5656.rolesync.utilities.Message;
 import io.github.dode5656.rolesync.utilities.PluginStatus;
 import org.bukkit.command.Command;
@@ -27,6 +28,9 @@ public class ReloadCommand implements CommandExecutor {
             if (plugin.getPluginStatus() == PluginStatus.DISABLED) plugin.setPluginStatus(PluginStatus.ENABLED);
             plugin.getConfigChecker().checkDefaults();
             plugin.startBot();
+            plugin.getCommand("sync").setExecutor(new SyncCommand(plugin));
+            plugin.getCommand("syncreload").setExecutor(new ReloadCommand(plugin));
+            plugin.getServer().getPluginManager().registerEvents(new JoinEvent(plugin), plugin);
         } catch (Exception e) {
             plugin.getLogger().log(Level.SEVERE, "Error while trying to reload config" + e);
             commandSender.sendMessage(plugin.getMessageManager().format(Message.CONFIG_RELOAD_ERROR));
