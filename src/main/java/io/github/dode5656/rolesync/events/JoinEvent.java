@@ -14,7 +14,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -53,34 +52,21 @@ public class JoinEvent implements Listener {
             List<Role> memberRoles = member.getRoles();
 
             Map<String, Object> roles = plugin.getConfig().getConfigurationSection("roles").getValues(false);
-            List<String> roleIDs = new ArrayList<>();
-            List<String> removed = new ArrayList<>();
+            List<Role> roleIDs = member.getRoles();
             for (Map.Entry<String, Object> entry : roles.entrySet()) {
                 String key = entry.getKey();
                 Object value = entry.getValue();
-                if (player.hasPermission("rolesync.role." + key) && !memberRoles.contains(guild.getRoleById((String) value))) {
-                    roleIDs.add((String) value);
-                } else if (!player.hasPermission("rolesync.role." + key) && memberRoles.contains(guild.getRoleById((String) value))) {
-                    removed.add((String) value);
-                }
-
-            }
-
-            if (roleIDs.isEmpty() && removed.isEmpty()) return;
-
-            for (String roleID : roleIDs) {
-                Role role = guild.getRoleById(roleID);
-                if (role == null) {
-                    continue;
-                }
-                guild.addRoleToMember(member, role).queue();
-            }
-
-            for (String roleID: removed) {
-                Role role = guild.getRoleById(roleID);
+                Role role = guild.getRoleById((String) value);
                 if (role == null) continue;
-                guild.removeRoleFromMember(member, role).queue();
+                if (player.hasPermission("rolesync.role." + key) && !memberRoles.contains(guild.getRoleById((String) value))) {
+                    roleIDs.add(role);
+                } else if (!player.hasPermission("rolesync.role." + key) && memberRoles.contains(guild.getRoleById((String) value))) {
+                    roleIDs.remove(role);
+                }
+
             }
+
+            guild.modifyMemberRoles(member, roleIDs).queue();
 
             player.sendMessage(messageManager.format(Message.UPDATED_ROLES));
         }

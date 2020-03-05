@@ -17,7 +17,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -111,6 +110,7 @@ public class SyncCommand implements CommandExecutor {
                             privateChannel.sendMessage(messageManager.replacePlaceholders(
                                     messageManager.formatDiscord(Message.ALREADY_VERIFIED),
                                     privateChannel.getUser().getAsTag(), sender.getName(), guild.getName())).queue();
+
                             return;
                         }
 
@@ -127,22 +127,18 @@ public class SyncCommand implements CommandExecutor {
                     }
 
                     Map<String, Object> roles = plugin.getConfig().getConfigurationSection("roles").getValues(false);
-                    List<String> roleIDs = new ArrayList<>();
+                    List<Role> roleIDs = finalMember.getRoles();
                     for (Map.Entry<String, Object> entry : roles.entrySet()) {
                         String key = entry.getKey();
                         Object value = entry.getValue();
                         if (sender.hasPermission("rolesync.role." + key)) {
-                            roleIDs.add((String) value);
+                            Role role = guild.getRoleById((String) value);
+                            if (role == null) continue;
+                            roleIDs.add(role);
                         }
                     }
 
-                    for (String roleID : roleIDs) {
-                        Role role = guild.getRoleById(roleID);
-                        if (role == null) {
-                            continue;
-                        }
-                        guild.addRoleToMember(finalMember, role).queue();
-                    }
+                    guild.modifyMemberRoles(finalMember, roleIDs).queue();
 
                     sender.sendMessage(messageManager.replacePlaceholders(
                             messageManager.format(Message.VERIFIED_MINECRAFT),
