@@ -72,13 +72,27 @@ public class SyncCommand implements CommandExecutor {
             member = guild.getMemberByTag(args[0]);
         } catch (Exception ignored) {
         }
+
         if (member == null) {
 
-            sender.sendMessage(messageManager.replacePlaceholders(
-                    messageManager.format(Message.BAD_NAME),
-                    args[0], sender.getName(), guild.getName()));
+            boolean result = false;
 
-            return true;
+            if (args[0].equals("id")) {
+
+                Member idMember = guild.getMemberById(args[1]);
+                if (idMember != null) {
+                    member = idMember;
+                    result = true;
+                }
+
+            }
+
+            if (!result) {
+                sender.sendMessage(messageManager.replacePlaceholders(messageManager.format(Message.BAD_NAME),
+                        args[0], sender.getName(), guild.getName()));
+
+                return true;
+            }
         }
         final Member finalMember = member;
         member.getUser().openPrivateChannel().queue(privateChannel -> {

@@ -6,7 +6,7 @@
 
     <groupId>io.github.dode5656</groupId>
     <artifactId>RoleSync</artifactId>
-    <version>1.1.1</version>
+    <version>1.1.2</version>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -20,9 +20,9 @@
             <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
         </repository>
         <repository>
-            <id>central</id>
-            <name>bintray</name>
-            <url>http://jcenter.bintray.com</url>
+            <id>jcenter</id>
+            <name>jcenter-bintray</name>
+            <url>https://jcenter.bintray.com</url>
         </repository>
     </repositories>
 
@@ -37,7 +37,7 @@
         <dependency>
             <groupId>net.dv8tion</groupId>
             <artifactId>JDA</artifactId>
-            <version>4.0.0_46</version>
+            <version>4.1.1_110</version>
             <exclusions>
                 <exclusion>
                     <groupId>club.minnced</groupId>
