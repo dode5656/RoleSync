@@ -14,6 +14,8 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -52,21 +54,22 @@ public class JoinEvent implements Listener {
             List<Role> memberRoles = member.getRoles();
 
             Map<String, Object> roles = plugin.getConfig().getConfigurationSection("roles").getValues(false);
-            List<Role> roleIDs = member.getRoles();
+            Collection<Role> added = new ArrayList<>();
+            Collection<Role> removed = new ArrayList<>();
             for (Map.Entry<String, Object> entry : roles.entrySet()) {
                 String key = entry.getKey();
                 Object value = entry.getValue();
                 Role role = guild.getRoleById((String) value);
                 if (role == null) continue;
                 if (player.hasPermission("rolesync.role." + key) && !memberRoles.contains(guild.getRoleById((String) value))) {
-                    roleIDs.add(role);
+                    added.add(role);
                 } else if (!player.hasPermission("rolesync.role." + key) && memberRoles.contains(guild.getRoleById((String) value))) {
-                    roleIDs.remove(role);
+                    removed.add(role);
                 }
 
             }
 
-            guild.modifyMemberRoles(member, roleIDs).queue();
+            guild.modifyMemberRoles(member, added, removed).queue();
 
             player.sendMessage(messageManager.format(Message.UPDATED_ROLES));
         }

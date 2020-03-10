@@ -17,7 +17,8 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
-import java.util.List;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -141,18 +142,18 @@ public class SyncCommand implements CommandExecutor {
                     }
 
                     Map<String, Object> roles = plugin.getConfig().getConfigurationSection("roles").getValues(false);
-                    List<Role> roleIDs = finalMember.getRoles();
+                    Collection<Role> added = new ArrayList<>();
                     for (Map.Entry<String, Object> entry : roles.entrySet()) {
                         String key = entry.getKey();
                         Object value = entry.getValue();
                         if (sender.hasPermission("rolesync.role." + key)) {
                             Role role = guild.getRoleById((String) value);
                             if (role == null) continue;
-                            roleIDs.add(role);
+                            added.add(role);
                         }
                     }
 
-                    guild.modifyMemberRoles(finalMember, roleIDs).queue();
+                    guild.modifyMemberRoles(finalMember, added, null).queue();
 
                     sender.sendMessage(messageManager.replacePlaceholders(
                             messageManager.format(Message.VERIFIED_MINECRAFT),
