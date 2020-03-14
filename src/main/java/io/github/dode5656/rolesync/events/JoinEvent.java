@@ -69,6 +69,8 @@ public class JoinEvent implements Listener {
 
             }
 
+            if (added.isEmpty() && removed.isEmpty()) return;
+
             guild.modifyMemberRoles(member, added, removed).queue();
 
             player.sendMessage(messageManager.format(Message.UPDATED_ROLES));
