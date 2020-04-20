@@ -77,3 +77,8 @@ hs_err_pid*
 
 # End of https://www.gitignore.io/api/java,intellij
 dependency-reduced-pom.xml
+.gradle/
+gradle/
+gradlew
+gradlew.bat
+build/

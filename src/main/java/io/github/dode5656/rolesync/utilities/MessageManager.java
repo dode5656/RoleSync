@@ -5,13 +5,13 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.configuration.file.FileConfiguration;
 
-public class MessageManager {
+public final class MessageManager {
     private final String prefix;
     private final FileConfiguration messages;
 
     public MessageManager(RoleSync plugin) {
         messages = plugin.getMessages().read();
-        prefix = color(plugin.getConfig().getString(Message.PREFIX.getMessage()) + " ");
+        prefix = color(plugin.getConfig().getString(Message.PREFIX.getMessage()));
     }
 
     public final String color(String message) {

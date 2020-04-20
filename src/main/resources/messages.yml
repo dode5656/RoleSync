@@ -19,3 +19,7 @@ messages:
   updated-roles: "Updated your roles in discord successfully!"
   no-perm-cmd: "You don't have permission to run this command!"
   plugin-disabled: "Plugin disabled due to default values. Update config.yml then reload the config by doing /syncreload."
+  usage: "/<command> <discordtag> - Don't forget to add the numbers after the #."
+  player-not-found: "Player not found!"
+  not-synced: "You are not synced to be unsynced!"
+  unsynced-successfully: "Your account has been unsynced successfully!"

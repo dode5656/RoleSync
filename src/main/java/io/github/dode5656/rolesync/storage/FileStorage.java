@@ -9,7 +9,7 @@ import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class FileStorage {
+public final class FileStorage {
     private final File file;
     private FileConfiguration fileStorage;
 
