@@ -6,12 +6,12 @@ import org.bukkit.command.Command;
 import org.bukkit.configuration.file.FileConfiguration;
 
 public final class MessageManager {
-    private final String prefix;
+    private final RoleSync plugin;
     private final FileConfiguration messages;
 
     public MessageManager(RoleSync plugin) {
         messages = plugin.getMessages().read();
-        prefix = color(plugin.getConfig().getString(Message.PREFIX.getMessage()));
+        this.plugin = plugin;
     }
 
     public final String color(String message) {
@@ -19,11 +19,11 @@ public final class MessageManager {
     }
 
     public final String usage(Command cmd) {
-        return prefix + cmd.getUsage();
+        return color(plugin.getConfig().getString(Message.PREFIX.getMessage())) + cmd.getUsage();
     }
 
     public final String format(String msg) {
-        return prefix + color(msg);
+        return color(plugin.getConfig().getString(Message.PREFIX.getMessage())) + color(msg);
     }
 
     public final String format(Message msg) { return format(this.messages.getString(msg.getMessage())); }
