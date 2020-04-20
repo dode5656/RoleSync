@@ -23,9 +23,9 @@ public enum Message {
     PLUGIN_DISABLED("messages.plugin-disabled"),
     USAGE("messages.usage"),
     PLAYER_NOT_FOUND("messages.player-not-found"),
-    NOT_SYNCED("messges.not-synced"),
+    NOT_SYNCED("messages.not-synced"),
     UNSYNCED_SUCCESSFULLY("messages.unsynced-successfully");
-    private String key;
+    private final String key;
 
     Message(String s) {
         this.key = s;

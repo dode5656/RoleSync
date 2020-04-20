@@ -39,7 +39,7 @@ public class UnSyncCommand implements CommandExecutor {
 
         if (sender.hasPermission("rolesync.unsync.others")) {
             if (!(args.length >= 1)) {
-                sender.sendMessage(plugin.getMessageManager().usage(command));
+                unsync((Player) sender);
                 return true;
             }
 
