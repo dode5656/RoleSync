@@ -1,8 +1,6 @@
 package io.github.dode5656.rolesync;
 
-import ch.jalu.configme.resource.YamlFileResource;
 import fr.xephi.authme.AuthMe;
-import fr.xephi.authme.service.yaml.YamlFileResourceProvider;
 import fr.xephi.authme.settings.Settings;
 import fr.xephi.authme.settings.properties.RegistrationSettings;
 import io.github.dode5656.rolesync.commands.ReloadCommand;
@@ -11,6 +9,7 @@ import io.github.dode5656.rolesync.commands.UnSyncCommand;
 import io.github.dode5656.rolesync.events.AuthMeLoginEvent;
 import io.github.dode5656.rolesync.events.AuthMeRegisterEvent;
 import io.github.dode5656.rolesync.events.JoinEvent;
+import io.github.dode5656.rolesync.events.ReadyListener;
 import io.github.dode5656.rolesync.storage.FileStorage;
 import io.github.dode5656.rolesync.utilities.ConfigChecker;
 import io.github.dode5656.rolesync.utilities.MessageManager;
@@ -117,7 +116,7 @@ public final class RoleSync extends JavaPlugin {
 
     public void startBot() {
         try {
-            this.jda = new JDABuilder(AccountType.BOT).setToken(getConfig().getString("bot-token")).build();
+            this.jda = new JDABuilder(AccountType.BOT).setToken(getConfig().getString("bot-token")).addEventListeners(new ReadyListener(this)).build();
         } catch (LoginException e) {
             getLogger().log(Level.SEVERE, "Error when logging in!");
             disablePlugin();
