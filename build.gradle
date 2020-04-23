@@ -45,5 +45,6 @@ shadowJar {
     relocate "org.slf4j", "io.github.dode5656"
     relocate "org.bstats", "io.github.dode5656"
     classifier = ""
+    minimize()
 }
 
