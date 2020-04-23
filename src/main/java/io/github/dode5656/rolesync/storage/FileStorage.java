@@ -36,12 +36,22 @@ public final class FileStorage {
     }
 
     public final void saveDefaults(RoleSync main) {
+
         if (this.file.exists()) {
-            reload();
-            return;
+
+            if (main.getConfig().getString("version").equals(main.getDescription().getVersion())) {
+                reload();
+                return;
+            }
+
+            this.file.renameTo(new File(main.getDataFolder().getPath()+File.separator+"old",
+                    "old_"+this.file.getName()));
+
         }
+
         main.saveResource(this.file.getName(), false);
         reload();
+
     }
 
 }

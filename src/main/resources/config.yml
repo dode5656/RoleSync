@@ -1,3 +1,6 @@
+#Version of the config, PLEASE DO NOT CHANGE OR STUFF WILL BREAK!!!!
+version: "1.2.0-BETA"
+
 # Place here the bot token that can be get from https://discordapp.com/developers/applications/me
 bot-token: "REPLACEBOTTOKEN"
 # Place here the discord server id of the server you want the role to be given in.
@@ -6,7 +9,7 @@ server-id: "REPLACESERVERID"
 #NOTE: This might override the current bot status.
 enable-bot-status: false
 #Choose from the allowed options what to have the bot say.
-bot-status: PLAYING # Allowed options: PLAYING, STREAMING, LISTENING, WATCHING, CUSTOM_STATUS
+bot-status: PLAYING # Allowed options: DEFAULT (same as Playing), LISTENING, WATCHING
 #Place here the custom status you want to have bot have!
 custom-status: "with RoleSync!"
 

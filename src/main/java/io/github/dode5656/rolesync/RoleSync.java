@@ -125,4 +125,26 @@ public final class RoleSync extends JavaPlugin {
     public void disablePlugin() {
         pluginStatus = PluginStatus.DISABLED;
     }
+
+    @Override
+    public void saveDefaultConfig() {
+        File file = new File(getDataFolder().getPath(),"config.yml");
+
+        if (file.exists()) {
+
+            if (getConfig().getString("version").equals(getDescription().getVersion())) {
+                reloadConfig();
+                return;
+            }
+
+            file.renameTo(new File(getDataFolder().getPath()+File.separator+"old",
+                    "old_"+file.getName()));
+
+        }
+
+        saveResource(file.getName(), false);
+        reloadConfig();
+
+    }
+
 }

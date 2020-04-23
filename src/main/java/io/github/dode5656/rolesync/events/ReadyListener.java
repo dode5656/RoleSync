@@ -20,6 +20,17 @@ public class ReadyListener implements EventListener {
     public void onEvent(@Nonnull GenericEvent event) {
         if (!(event instanceof ReadyEvent)) { return; }
         if (!plugin.getConfig().getBoolean("enable-bot-status")) { return; }
-        event.getJDA().getPresence().setActivity(Activity.of(Activity.ActivityType.valueOf(plugin.getConfig().getString("bot-status")),plugin.getConfig().getString("custom-status")));
+
+        try {
+
+            event.getJDA().getPresence().setActivity(Activity.of(Activity.ActivityType.valueOf(plugin.getConfig()
+                    .getString("bot-status")), plugin.getConfig().getString("custom-status")));
+
+        } catch (IllegalArgumentException e) {
+
+            plugin.getLogger().warning(plugin.getConfig().getString("bot-status")
+                    + " is an invalid Bot Status! Please replace it with a valid status!");
+
+        }
     }
 }
