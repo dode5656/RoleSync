@@ -1,6 +1,5 @@
 package io.github.dode5656.rolesync;
 
-import fr.xephi.authme.AuthMe;
 import fr.xephi.authme.settings.Settings;
 import fr.xephi.authme.settings.properties.RegistrationSettings;
 import io.github.dode5656.rolesync.commands.ReloadCommand;
@@ -56,7 +55,7 @@ public final class RoleSync extends JavaPlugin {
         getCommand("syncreload").setExecutor(new ReloadCommand(this));
         getCommand("unsync").setExecutor(new UnSyncCommand(this));
 
-        if (getServer().getPluginManager().getPlugin(AuthMe.getPluginName()) != null) {
+        if (getServer().getPluginManager().getPlugin("AuthMeReloaded") != null) {
             Settings authMeSettings = null;
             try {
                 authMeSettings = (Settings) FieldUtils.readDeclaredField(Bukkit.getPluginManager().getPlugin("AuthMe"), "settings", true);
