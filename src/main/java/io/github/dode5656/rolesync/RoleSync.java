@@ -50,7 +50,7 @@ public final class RoleSync extends JavaPlugin {
         getCommand("syncreload").setExecutor(new ReloadCommand(this));
         getCommand("unsync").setExecutor(new UnSyncCommand(this));
 
-        if (getServer().getPluginManager().getPlugin("AuthMeReloaded") != null) {
+        if (getServer().getPluginManager().getPlugin("AuthMe") != null) {
 
             getServer().getPluginManager().registerEvents(new AuthMeLoginEvent(this),this);
 
