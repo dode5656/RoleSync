@@ -1,6 +1,7 @@
 package io.github.dode5656.rolesync.storage;
 
 import io.github.dode5656.rolesync.RoleSync;
+import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -38,10 +39,23 @@ public final class FileStorage {
     public final void saveDefaults(RoleSync main) {
 
         if (this.file.exists()) {
+            FileConfiguration tempConfig = new YamlConfiguration();
+            try {
+                tempConfig.load(file);
+            } catch (IOException | InvalidConfigurationException e) {
+                main.getLogger().log(Level.SEVERE, "Couldn't load " + file.getName(), e);
+            }
 
-            if (main.getConfig().getString("version").equals(main.getDescription().getVersion())) {
+            if (tempConfig.getString("version") != null &&
+                    tempConfig.getString("version").equals(main.getDescription().getVersion())) {
                 reload();
                 return;
+            }
+
+            File oldDir = new File(main.getDataFolder().getPath(),"old");
+
+            if (!oldDir.exists()) {
+                oldDir.mkdirs();
             }
 
             this.file.renameTo(new File(main.getDataFolder().getPath()+File.separator+"old",

@@ -14,10 +14,14 @@ import net.dv8tion.jda.api.AccountType;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import org.bstats.bukkit.Metrics;
+import org.bukkit.configuration.InvalidConfigurationException;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import javax.security.auth.login.LoginException;
 import java.io.File;
+import java.io.IOException;
 import java.util.logging.Level;
 
 public final class RoleSync extends JavaPlugin {
@@ -119,18 +123,31 @@ public final class RoleSync extends JavaPlugin {
 
         if (file.exists()) {
 
-            if (getConfig().getString("version").equals(getDescription().getVersion())) {
+            FileConfiguration tempConfig = new YamlConfiguration();
+            try {
+                tempConfig.load(file);
+            } catch (IOException | InvalidConfigurationException e) {
+                getLogger().log(Level.SEVERE, "Couldn't load config.yml", e);
+            }
+
+            if (tempConfig.getString("version") != null &&
+                    tempConfig.getString("version").equals(getDescription().getVersion())) {
                 reloadConfig();
                 return;
             }
 
+            File oldDir = new File(getDataFolder().getPath(),"old");
+
+            if (!oldDir.exists()) {
+                oldDir.mkdirs();
+            }
+
+
             file.renameTo(new File(getDataFolder().getPath()+File.separator+"old",
                     "old_"+file.getName()));
-
         }
 
-        saveResource(file.getName(), false);
-        reloadConfig();
+        super.saveDefaultConfig();
 
     }
 
