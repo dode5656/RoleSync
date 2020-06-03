@@ -42,7 +42,7 @@ public final class FileStorage {
             try {
                 tempConfig.load(new File(main.getDataFolder().getPath(),"config.yml"));
             } catch (IOException | InvalidConfigurationException e) {
-                main.getLogger().log(Level.SEVERE, "Couldn't load " + file.getName(), e);
+                main.getLogger().log(Level.SEVERE, "Couldn't load config.yml", e);
             }
 
             if (tempConfig.getString("version") != null &&
