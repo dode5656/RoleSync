@@ -34,7 +34,7 @@ public final class FileStorage {
 
     public final void reload() {
         try {
-            if (!file.getParentFile().exists()) file.mkdirs();
+            if (!file.getParentFile().exists()) file.getParentFile().mkdirs();
             if (!file.exists()) file.createNewFile();
             this.fileStorage = new YamlConfiguration();
             this.fileStorage.load(this.file);
