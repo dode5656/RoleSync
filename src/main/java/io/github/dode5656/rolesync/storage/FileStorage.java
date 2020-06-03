@@ -4,7 +4,6 @@ import io.github.dode5656.rolesync.RoleSync;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.logging.Level;
@@ -41,7 +40,7 @@ public final class FileStorage {
         if (this.file.exists()) {
             FileConfiguration tempConfig = new YamlConfiguration();
             try {
-                tempConfig.load(file);
+                tempConfig.load(new File(main.getDataFolder().getPath(),"config.yml"));
             } catch (IOException | InvalidConfigurationException e) {
                 main.getLogger().log(Level.SEVERE, "Couldn't load " + file.getName(), e);
             }
