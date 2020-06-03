@@ -34,10 +34,12 @@ public final class FileStorage {
 
     public final void reload() {
         try {
+            if (!file.getParentFile().exists()) file.mkdirs();
+            if (!file.exists()) file.createNewFile();
             this.fileStorage = new YamlConfiguration();
             this.fileStorage.load(this.file);
         } catch (IOException | InvalidConfigurationException e) {
-            logger.log(Level.SEVERE, "Couldn't load config.yml", e);
+            logger.log(Level.SEVERE, "Couldn't load "+ file.getName(), e);
         }
     }
 
