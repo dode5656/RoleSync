@@ -3,7 +3,6 @@ package io.github.dode5656.rolesync.utilities;
 import io.github.dode5656.rolesync.RoleSync;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
-import org.bukkit.configuration.file.FileConfiguration;
 
 public final class MessageManager {
     private final RoleSync plugin;

@@ -36,7 +36,6 @@ public final class FileStorage {
         try {
             if (!file.getParentFile().exists()) file.getParentFile().mkdirs();
             if (!file.exists()) file.createNewFile();
-            System.out.println("IM HERE");
             this.fileStorage = new YamlConfiguration();
             this.fileStorage.load(this.file);
         } catch (IOException | InvalidConfigurationException e) {
