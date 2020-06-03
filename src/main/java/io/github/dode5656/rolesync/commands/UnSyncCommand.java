@@ -97,7 +97,7 @@ public class UnSyncCommand implements CommandExecutor {
 
         plugin.getPlayerCache().read().set("verified."+player.getUniqueId().toString() ,null);
 
-        plugin.getPlayerCache().save(plugin);
+        plugin.getPlayerCache().save();
         plugin.getPlayerCache().reload();
 
         player.sendMessage(plugin.getMessageManager().format(Message.UNSYNCED_SUCCESSFULLY));

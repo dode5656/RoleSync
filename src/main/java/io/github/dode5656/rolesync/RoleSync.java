@@ -39,9 +39,9 @@ public final class RoleSync extends JavaPlugin {
 
         saveDefaultConfig();
 
-        playerCache = new FileStorage("playerCache.yml", new File(getDataFolder().getPath(), "cache"));
+        playerCache = new FileStorage("playerCache.yml", new File(getDataFolder().getPath(), "cache"),this);
 
-        messages = new FileStorage("messages.yml", new File(getDataFolder().getPath()));
+        messages = new FileStorage("messages.yml", new File(getDataFolder().getPath()),this);
         messages.saveDefaults(this);
         messageManager = new MessageManager(this);
 

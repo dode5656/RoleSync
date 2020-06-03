@@ -12,14 +12,15 @@ import java.util.logging.Logger;
 public final class FileStorage {
     private final File file;
     private FileConfiguration fileStorage;
+    private final Logger logger;
 
-    public FileStorage(String name, File location) {
+    public FileStorage(String name, File location, RoleSync main) {
         this.file = new File(location, name);
+        this.logger = main.getLogger();
         reload();
     }
 
-    public final void save(RoleSync main) {
-        Logger logger = main.getLogger();
+    public final void save() {
         try {
             fileStorage.save(file);
         } catch (IOException e) {
@@ -32,7 +33,12 @@ public final class FileStorage {
     }
 
     public final void reload() {
-        this.fileStorage = YamlConfiguration.loadConfiguration(this.file);
+        try {
+            this.fileStorage = new YamlConfiguration();
+            this.fileStorage.load(this.file);
+        } catch (IOException | InvalidConfigurationException e) {
+            logger.log(Level.SEVERE, "Couldn't load config.yml", e);
+        }
     }
 
     public final void saveDefaults(RoleSync main) {
@@ -42,7 +48,7 @@ public final class FileStorage {
             try {
                 tempConfig.load(new File(main.getDataFolder().getPath(),"config.yml"));
             } catch (IOException | InvalidConfigurationException e) {
-                main.getLogger().log(Level.SEVERE, "Couldn't load config.yml", e);
+                logger.log(Level.SEVERE, "Couldn't load config.yml", e);
             }
 
             if (tempConfig.getString("version") != null &&

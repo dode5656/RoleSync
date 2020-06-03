@@ -146,7 +146,7 @@ public final class SyncCommand implements CommandExecutor {
                                 privateChannel.getUser().getId());
                     }
 
-                    plugin.getPlayerCache().save(plugin);
+                    plugin.getPlayerCache().save();
                     plugin.getPlayerCache().reload();
 
 
