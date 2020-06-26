@@ -4,6 +4,9 @@ import io.github.dode5656.rolesync.RoleSync;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 public final class MessageManager {
     private final RoleSync plugin;
 
@@ -12,6 +15,11 @@ public final class MessageManager {
     }
 
     public final String color(String message) {
+
+        if (plugin.getServer().getVersion().contains("1.16")) {
+            return ChatColor.translateAlternateColorCodes('&', convertHexToColor(message));
+        }
+
         return ChatColor.translateAlternateColorCodes('&', message);
     }
 
@@ -37,4 +45,16 @@ public final class MessageManager {
     public final String defaultError(String value) {
         return plugin.getMessages().read().getString(Message.DEFAULT_VALUE.getMessage()).replaceAll("\\{value}", value);
     }
+
+    String convertHexToColor(String msg) {
+        Pattern p = Pattern.compile("&x[a-f0-9A-F]{6}");
+        Matcher m = p.matcher(msg);
+        String s = msg;
+        while (m.find()) {
+            String hexString = net.md_5.bungee.api.ChatColor.of('#' + m.group().substring(2)).toString();
+            s = s.replace(m.group(), hexString);
+        }
+        return s;
+    }
+
 }

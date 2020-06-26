@@ -1,5 +1,5 @@
 name: RoleSync
-version: 1.2.0-BETA
+version: 1.2.0-BETA-1.1
 author: dode5656
 main: io.github.dode5656.rolesync.RoleSync
 description: Plugin that links discord and minecraft and gives roles to the user in the server's discord.
