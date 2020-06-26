@@ -17,7 +17,6 @@ public final class FileStorage {
     public FileStorage(String name, File location, RoleSync main) {
         this.file = new File(location, name);
         this.logger = main.getLogger();
-        reload();
     }
 
     public final void save() {
@@ -29,6 +28,7 @@ public final class FileStorage {
     }
 
     public final FileConfiguration read() {
+        reload();
         return fileStorage;
     }
 
