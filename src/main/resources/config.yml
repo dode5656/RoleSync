@@ -1,5 +1,5 @@
 #Version of the config, PLEASE DO NOT CHANGE OR STUFF WILL BREAK!!!!
-version: "1.2.0-BETA"
+version: "1.2.0-BETA-1.2"
 
 # Place here the bot token that can be get from https://discordapp.com/developers/applications/me
 bot-token: "REPLACEBOTTOKEN"
