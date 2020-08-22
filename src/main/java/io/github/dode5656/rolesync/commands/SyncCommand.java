@@ -19,10 +19,11 @@ import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-public class SyncCommand implements CommandExecutor {
+public final class SyncCommand implements CommandExecutor {
     private final RoleSync plugin;
     private EventWaiter waiter;
     private JDA jda;
@@ -55,7 +56,7 @@ public class SyncCommand implements CommandExecutor {
         final Player player = (Player) sender;
 
         if (args.length < 1) {
-            sender.sendMessage(messageManager.usage(cmd));
+            sender.sendMessage(messageManager.format(Message.USAGE));
             return true;
         }
 
@@ -95,6 +96,40 @@ public class SyncCommand implements CommandExecutor {
                 return true;
             }
         }
+
+        if (plugin.getPlayerCache().read() != null && plugin.getPlayerCache().read().contains("verified." + player.getUniqueId().toString())) {
+            List<Role> memberRoles = member.getRoles();
+
+            Map<String, Object> roles = plugin.getConfig().getConfigurationSection("roles").getValues(false);
+            Collection<Role> added = new ArrayList<>();
+            Collection<Role> removed = new ArrayList<>();
+            for (Map.Entry<String, Object> entry : roles.entrySet()) {
+                String key = entry.getKey();
+                Object value = entry.getValue();
+                Role role = guild.getRoleById((String) value);
+                if (role == null) continue;
+                if (player.hasPermission("rolesync.role." + key) && !memberRoles.contains(guild.getRoleById((String) value))) {
+                    added.add(role);
+                } else if (!player.hasPermission("rolesync.role." + key) && memberRoles.contains(guild.getRoleById((String) value))) {
+                    removed.add(role);
+                }
+
+            }
+
+            if (added.isEmpty() && removed.isEmpty()) {
+                player.sendMessage(messageManager.replacePlaceholders(
+                        messageManager.format(Message.ALREADY_VERIFIED),
+                        member.getUser().getAsTag(), sender.getName(), guild.getName()));
+
+                return true;
+            }
+
+            guild.modifyMemberRoles(member, added, removed).queue();
+            player.sendMessage(messageManager.format(Message.UPDATED_ROLES));
+
+            return true;
+        }
+
         final Member finalMember = member;
         member.getUser().openPrivateChannel().queue(privateChannel -> {
 
@@ -105,41 +140,15 @@ public class SyncCommand implements CommandExecutor {
                     !event.getMessage().getAuthor().isBot(), event -> {
 
                 if (event.getMessage().getContentRaw().equalsIgnoreCase("yes")) {
-                    if (plugin.getPlayerCache().read() != null && plugin.getPlayerCache().read().contains("verified." + player.getUniqueId().toString())) {
-                        boolean result = false;
-                        for ( Map.Entry<String, Object> entry : plugin.getConfig().getConfigurationSection("roles").getValues(false).entrySet()) {
-                            Object value = entry.getValue();
-                            Role role = guild.getRoleById((String) value);
-                            if (role == null) {
-                                continue;
-                            }
-                            if(finalMember.getRoles().contains(role)) {
-                                result = true;
-                            }
-                        }
-                        if (result) {
-                            player.sendMessage(messageManager.replacePlaceholders(
-                                    messageManager.format(Message.ALREADY_VERIFIED),
-                                    privateChannel.getUser().getAsTag(), sender.getName(), guild.getName()));
-
-                            privateChannel.sendMessage(messageManager.replacePlaceholders(
-                                    messageManager.formatDiscord(Message.ALREADY_VERIFIED),
-                                    privateChannel.getUser().getAsTag(), sender.getName(), guild.getName())).queue();
-
-                            return;
-                        }
-
-                    } else {
-                        FileConfiguration playerCache = plugin.getPlayerCache().read();
-                        if (playerCache != null) {
-                            playerCache.set("verified." + player.getUniqueId().toString(),
-                                    privateChannel.getUser().getId());
-                        }
-
-                        plugin.getPlayerCache().save(plugin);
-                        plugin.getPlayerCache().reload();
-
+                    FileConfiguration playerCache = plugin.getPlayerCache().read();
+                    if (playerCache != null) {
+                        playerCache.set("verified." + player.getUniqueId().toString(),
+                                privateChannel.getUser().getId());
                     }
+
+                    plugin.getPlayerCache().save();
+                    plugin.getPlayerCache().reload();
+
 
                     Map<String, Object> roles = plugin.getConfig().getConfigurationSection("roles").getValues(false);
                     Collection<Role> added = new ArrayList<>();

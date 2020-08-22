@@ -10,7 +10,7 @@ import org.bukkit.entity.Player;
 
 import java.util.logging.Level;
 
-public class ReloadCommand implements CommandExecutor {
+public final class ReloadCommand implements CommandExecutor {
     private final RoleSync plugin;
 
     public ReloadCommand(final RoleSync plugin) {
@@ -24,12 +24,13 @@ public class ReloadCommand implements CommandExecutor {
         }
         try {
             plugin.reloadConfig();
+            plugin.getMessages().reload();
             if (plugin.getPluginStatus() == PluginStatus.DISABLED) plugin.setPluginStatus(PluginStatus.ENABLED);
             plugin.getConfigChecker().checkDefaults();
             plugin.startBot();
             plugin.getCommand("sync").setExecutor(new SyncCommand(plugin));
         } catch (Exception e) {
-            plugin.getLogger().log(Level.SEVERE, "Error while trying to reload config" + e);
+            plugin.getLogger().log(Level.SEVERE, "Error while trying to reload" + e);
             commandSender.sendMessage(plugin.getMessageManager().format(Message.CONFIG_RELOAD_ERROR));
             return true;
         }

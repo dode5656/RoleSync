@@ -1,5 +1,6 @@
 package io.github.dode5656.rolesync.events;
 
+import fr.xephi.authme.events.LoginEvent;
 import io.github.dode5656.rolesync.RoleSync;
 import io.github.dode5656.rolesync.utilities.Message;
 import io.github.dode5656.rolesync.utilities.MessageManager;
@@ -12,22 +13,22 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerJoinEvent;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-public final class JoinEvent implements Listener {
+public final class AuthMeLoginEvent implements Listener {
+
     private final RoleSync plugin;
 
-    public JoinEvent(RoleSync plugin) {
+    public AuthMeLoginEvent(RoleSync plugin) {
         this.plugin = plugin;
     }
 
     @EventHandler
-    public void onJoin(PlayerJoinEvent e) {
+    public void onLogin(LoginEvent e) {
         if (plugin.getPluginStatus() == PluginStatus.DISABLED) return;
         JDA jda = plugin.getJDA();
         Player player = e.getPlayer();
@@ -75,7 +76,6 @@ public final class JoinEvent implements Listener {
 
             player.sendMessage(messageManager.format(Message.UPDATED_ROLES));
         }
-
     }
 
 }

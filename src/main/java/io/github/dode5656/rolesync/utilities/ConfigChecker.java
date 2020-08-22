@@ -2,7 +2,7 @@ package io.github.dode5656.rolesync.utilities;
 
 import io.github.dode5656.rolesync.RoleSync;
 
-public class ConfigChecker {
+public final class ConfigChecker {
 
     private final RoleSync plugin;
 

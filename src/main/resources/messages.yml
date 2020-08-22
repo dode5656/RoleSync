@@ -14,8 +14,12 @@ messages:
   player-only: "This command is only for Players. It can't be run in console."
   invalid-server-id: "Your supplied server id is invalid. Please update it as soon as possible."
   default-value: "Found the default value for {value} value. This is an important value, without it the plugin can't work. Disabling plugin!"  # Placeholders: {value}
-  config-reloaded: "Config file reloaded successfully!"
+  config-reloaded: "Config and messages files reloaded successfully!"
   config-reload-error: "Error while trying to reload config, see error in the console."
   updated-roles: "Updated your roles in discord successfully!"
   no-perm-cmd: "You don't have permission to run this command!"
   plugin-disabled: "Plugin disabled due to default values. Update config.yml then reload the config by doing /syncreload."
+  usage: "/<command> <discordtag> - Don't forget to add the numbers after the #."
+  player-not-found: "Player not found!"
+  not-synced: "You are not synced to be unsynced!"
+  unsynced-successfully: "Your account has been unsynced successfully!"

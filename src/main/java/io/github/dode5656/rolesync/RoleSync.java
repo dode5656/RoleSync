@@ -2,7 +2,10 @@ package io.github.dode5656.rolesync;
 
 import io.github.dode5656.rolesync.commands.ReloadCommand;
 import io.github.dode5656.rolesync.commands.SyncCommand;
+import io.github.dode5656.rolesync.commands.UnSyncCommand;
+import io.github.dode5656.rolesync.events.AuthMeLoginEvent;
 import io.github.dode5656.rolesync.events.JoinEvent;
+import io.github.dode5656.rolesync.events.ReadyListener;
 import io.github.dode5656.rolesync.storage.FileStorage;
 import io.github.dode5656.rolesync.utilities.ConfigChecker;
 import io.github.dode5656.rolesync.utilities.MessageManager;
@@ -10,13 +13,18 @@ import io.github.dode5656.rolesync.utilities.PluginStatus;
 import net.dv8tion.jda.api.AccountType;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
+import org.bstats.bukkit.Metrics;
+import org.bukkit.configuration.InvalidConfigurationException;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import javax.security.auth.login.LoginException;
 import java.io.File;
+import java.io.IOException;
 import java.util.logging.Level;
 
-public class RoleSync extends JavaPlugin {
+public final class RoleSync extends JavaPlugin {
 
     private FileStorage playerCache;
     private FileStorage messages;
@@ -31,9 +39,9 @@ public class RoleSync extends JavaPlugin {
 
         saveDefaultConfig();
 
-        playerCache = new FileStorage("playerCache.yml", new File(getDataFolder().getPath(), "cache"));
+        playerCache = new FileStorage("playerCache.yml", new File(getDataFolder().getPath(), "cache"),this);
 
-        messages = new FileStorage("messages.yml", new File(getDataFolder().getPath()));
+        messages = new FileStorage("messages.yml", new File(getDataFolder().getPath()),this);
         messages.saveDefaults(this);
         messageManager = new MessageManager(this);
 
@@ -44,7 +52,22 @@ public class RoleSync extends JavaPlugin {
 
         getCommand("sync").setExecutor(new SyncCommand(this));
         getCommand("syncreload").setExecutor(new ReloadCommand(this));
-        getServer().getPluginManager().registerEvents(new JoinEvent(this), this);
+        getCommand("unsync").setExecutor(new UnSyncCommand(this));
+
+        if (getServer().getPluginManager().getPlugin("AuthMe") != null) {
+
+            getServer().getPluginManager().registerEvents(new AuthMeLoginEvent(this),this);
+
+        } else {
+
+            getServer().getPluginManager().registerEvents(new JoinEvent(this), this);
+
+        }
+
+        if (!getConfig().getBoolean("opt-out-bstats", false)) {
+            int pluginId = 6790;
+            Metrics metrics = new Metrics(this, pluginId);
+        }
 
     }
 
@@ -83,7 +106,7 @@ public class RoleSync extends JavaPlugin {
 
     public void startBot() {
         try {
-            this.jda = new JDABuilder(AccountType.BOT).setToken(getConfig().getString("bot-token")).build();
+            this.jda = new JDABuilder(AccountType.BOT).setToken(getConfig().getString("bot-token")).addEventListeners(new ReadyListener(this)).build();
         } catch (LoginException e) {
             getLogger().log(Level.SEVERE, "Error when logging in!");
             disablePlugin();
@@ -93,4 +116,39 @@ public class RoleSync extends JavaPlugin {
     public void disablePlugin() {
         pluginStatus = PluginStatus.DISABLED;
     }
+
+    @Override
+    public void saveDefaultConfig() {
+        File file = new File(getDataFolder().getPath(),"config.yml");
+
+        if (file.exists()) {
+
+            FileConfiguration tempConfig = new YamlConfiguration();
+            try {
+                tempConfig.load(file);
+            } catch (IOException | InvalidConfigurationException e) {
+                getLogger().log(Level.SEVERE, "Couldn't load config.yml", e);
+            }
+
+            if (tempConfig.getString("version") != null &&
+                    tempConfig.getString("version").equals(getDescription().getVersion())) {
+                reloadConfig();
+                return;
+            }
+
+            File oldDir = new File(getDataFolder().getPath(),"old");
+
+            if (!oldDir.exists()) {
+                oldDir.mkdirs();
+            }
+
+
+            file.renameTo(new File(getDataFolder().getPath()+File.separator+"old",
+                    "old_"+file.getName()));
+        }
+
+        super.saveDefaultConfig();
+
+    }
+
 }
