@@ -49,6 +49,7 @@ sourceCompatibility = '1.8'
 shadowJar {
     relocate "org.slf4j", "io.github.dode5656"
     relocate "org.bstats", "io.github.dode5656"
+    relocate "com.jagrosh", "io.github.dode5656"
     classifier = ""
     minimize()
 }
