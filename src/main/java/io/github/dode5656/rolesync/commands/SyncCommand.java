@@ -16,6 +16,7 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -69,6 +70,14 @@ public final class SyncCommand implements CommandExecutor {
             return true;
 
         }
+
+        BukkitRunnable runnable = new BukkitRunnable() {
+            public void run() {
+                guild.loadMembers().get();
+            }
+        };
+        plugin.addTask(runnable.runTaskAsynchronously(plugin).getTaskId());
+
         Member member = null;
         try {
             member = guild.getMemberByTag(args[0]);
@@ -81,7 +90,7 @@ public final class SyncCommand implements CommandExecutor {
 
             if (args[0].equals("id")) {
 
-                Member idMember = guild.getMemberById(args[1]);
+                Member idMember = guild.retrieveMemberById(args[1]).complete();
                 if (idMember != null) {
                     member = idMember;
                     result = true;
@@ -99,7 +108,12 @@ public final class SyncCommand implements CommandExecutor {
 
         if (plugin.getPlayerCache().read() != null && plugin.getPlayerCache().read().contains("verified." + player.getUniqueId().toString())) {
             List<Role> memberRoles = member.getRoles();
-
+            if (!plugin.getPlayerCache().read().getString("verified." + player.getUniqueId().toString()).equals(member.getId())) {
+                player.sendMessage(messageManager.replacePlaceholders(messageManager
+                        .format(Message.ALREADY_VERIFIED), member
+                        .getUser().getAsTag(), sender.getName(), guild.getName()));
+                return true;
+            }
             Map<String, Object> roles = plugin.getConfig().getConfigurationSection("roles").getValues(false);
             Collection<Role> added = new ArrayList<>();
             Collection<Role> removed = new ArrayList<>();
@@ -125,14 +139,25 @@ public final class SyncCommand implements CommandExecutor {
             }
 
             guild.modifyMemberRoles(member, added, removed).queue();
+            String nickname = this.plugin.getConfig().getString("nickname-format").replaceAll("\\{ign}", player.getName());
+            if (this.plugin.getConfig().getBoolean("change-nickname") && (member.getNickname() == null || !member.getNickname().equals(nickname)))
+                member.modifyNickname(nickname).queue();
             player.sendMessage(messageManager.format(Message.UPDATED_ROLES));
 
             return true;
         }
 
+        if (plugin.getPlayerCache().read() != null && plugin.getPlayerCache().read().getConfigurationSection("verified").getValues(false).containsValue(member.getId())) {
+            player.sendMessage(messageManager.replacePlaceholders(messageManager
+                    .format(Message.ALREADY_VERIFIED), member
+                    .getUser().getAsTag(), sender.getName(), guild.getName()));
+            return true;
+        }
+
         final Member finalMember = member;
         member.getUser().openPrivateChannel().queue(privateChannel -> {
-
+            player.sendMessage(messageManager.replacePlaceholders(messageManager.format(Message.REQUEST_REPLY),
+                    privateChannel.getUser().getAsTag(),sender.getName(),guild.getName()));
             privateChannel.sendMessage(messageManager.replacePlaceholders(messageManager.formatDiscord(Message.VERIFY_REQUEST),
                     privateChannel.getUser().getAsTag(), sender.getName(), guild.getName())).queue();
             waiter.waitForEvent(PrivateMessageReceivedEvent.class, event -> event.getChannel().getId()
@@ -163,6 +188,9 @@ public final class SyncCommand implements CommandExecutor {
                     }
 
                     guild.modifyMemberRoles(finalMember, added, null).queue();
+                    if (plugin.getConfig().getBoolean("change-nickname"))
+                        finalMember.modifyNickname(plugin.getConfig().getString("nickname-format")
+                                .replaceAll("\\{ign}", player.getName())).queue();
 
                     sender.sendMessage(messageManager.replacePlaceholders(
                             messageManager.format(Message.VERIFIED_MINECRAFT),
@@ -195,7 +223,9 @@ public final class SyncCommand implements CommandExecutor {
 
             });
 
-        });
+        },exception ->
+                player.sendMessage(messageManager.replacePlaceholders(messageManager.format(Message.DM_FAILED),
+                        finalMember.getUser().getAsTag(), sender.getName(), guild.getName())));
 
         return true;
 

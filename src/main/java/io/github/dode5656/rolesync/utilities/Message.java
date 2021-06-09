@@ -24,7 +24,9 @@ public enum Message {
     USAGE("messages.usage"),
     PLAYER_NOT_FOUND("messages.player-not-found"),
     NOT_SYNCED("messages.not-synced"),
-    UNSYNCED_SUCCESSFULLY("messages.unsynced-successfully");
+    UNSYNCED_SUCCESSFULLY("messages.unsynced-successfully"),
+    DM_FAILED("messages.dm-failed"),
+    REQUEST_REPLY("messages.request-reply");
     private final String key;
 
     Message(String s) {

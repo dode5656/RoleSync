@@ -48,7 +48,7 @@ public final class AuthMeLoginEvent implements Listener {
 
             }
 
-            Member member = guild.getMemberById(playerCache.getString("verified." + player.getUniqueId().toString()));
+            Member member = guild.retrieveMemberById(playerCache.getString("verified." + player.getUniqueId().toString())).complete();
 
             if (member == null) return;
 
@@ -73,7 +73,9 @@ public final class AuthMeLoginEvent implements Listener {
             if (added.isEmpty() && removed.isEmpty()) return;
 
             guild.modifyMemberRoles(member, added, removed).queue();
-
+            String nickname = this.plugin.getConfig().getString("nickname-format").replaceAll("\\{ign}", player.getName());
+            if (this.plugin.getConfig().getBoolean("change-nickname") && (member.getNickname() == null || !member.getNickname().equals(nickname)))
+                member.modifyNickname(nickname).queue();
             player.sendMessage(messageManager.format(Message.UPDATED_ROLES));
         }
     }

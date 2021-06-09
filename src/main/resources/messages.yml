@@ -23,3 +23,5 @@ messages:
   player-not-found: "Player not found!"
   not-synced: "You are not synced to be unsynced!"
   unsynced-successfully: "Your account has been unsynced successfully!"
+  dm-failed: "Could not DM User! User has DMs closed."
+  request-reply: "Successfully DMed User. Check your DMs!"

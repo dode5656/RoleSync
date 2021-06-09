@@ -76,7 +76,7 @@ public class UnSyncCommand implements CommandExecutor {
 
         }
 
-        Member member = guild.getMemberById(plugin.getPlayerCache().read().getString("verified." + player.getUniqueId().toString()));
+        Member member = guild.retrieveMemberById(plugin.getPlayerCache().read().getString("verified." + player.getUniqueId().toString())).complete();
 
         if (member == null) return;
 

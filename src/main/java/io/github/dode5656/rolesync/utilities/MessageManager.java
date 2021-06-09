@@ -16,7 +16,7 @@ public final class MessageManager {
 
     public final String color(String message) {
 
-        if (plugin.getServer().getVersion().contains("1.16")) {
+        if (Integer.parseInt(this.plugin.getServer().getVersion().split("\\.")[1]) >= 16) { // Check if 1.16+
             return ChatColor.translateAlternateColorCodes('&', convertHexToColor(message));
         }
 
@@ -37,9 +37,9 @@ public final class MessageManager {
 
     public final String replacePlaceholders(String msg, String discordTag, String playerName, String guildName) {
         return color(msg
-                .replaceAll("\\{discord_tag}", discordTag)
-                .replaceAll("\\{player_name}", playerName)
-                .replaceAll("\\{discord_server_name}", guildName));
+                .replaceAll("\\{discord_tag}", Matcher.quoteReplacement(discordTag))
+                .replaceAll("\\{player_name}", Matcher.quoteReplacement(playerName))
+                .replaceAll("\\{discord_server_name}", Matcher.quoteReplacement(guildName)));
     }
 
     public final String defaultError(String value) {

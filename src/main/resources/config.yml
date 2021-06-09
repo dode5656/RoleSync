@@ -1,5 +1,5 @@
 #Version of the config, PLEASE DO NOT CHANGE OR STUFF WILL BREAK!!!!
-version: "1.2.0-BETA"
+version: "1.2.0-BETA-1.3"
 
 # Place here the bot token that can be get from https://discordapp.com/developers/applications/me
 bot-token: "REPLACEBOTTOKEN"
@@ -9,7 +9,7 @@ server-id: "REPLACESERVERID"
 #NOTE: This might override the current bot status.
 enable-bot-status: false
 #Choose from the allowed options what to have the bot say.
-bot-status: PLAYING # Allowed options: DEFAULT (same as Playing), LISTENING, WATCHING
+bot-status: PLAYING # Allowed options: DEFAULT (same as PLAYING), LISTENING, WATCHING
 #Place here the custom status you want to have bot have!
 custom-status: "with RoleSync!"
 
@@ -26,3 +26,7 @@ verifyTimeout: 2
 
 #Opt out of bstats
 opt-out-bstats: false
+
+#Whether you want the bot to change nickname to in game name
+change-nickname: false
+nickname-format: "[Donator] {ign}" # Placeholders: {ign}

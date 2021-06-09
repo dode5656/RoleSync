@@ -10,9 +10,9 @@ import io.github.dode5656.rolesync.storage.FileStorage;
 import io.github.dode5656.rolesync.utilities.ConfigChecker;
 import io.github.dode5656.rolesync.utilities.MessageManager;
 import io.github.dode5656.rolesync.utilities.PluginStatus;
-import net.dv8tion.jda.api.AccountType;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
+import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -22,6 +22,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 import javax.security.auth.login.LoginException;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 
 public final class RoleSync extends JavaPlugin {
@@ -32,6 +34,7 @@ public final class RoleSync extends JavaPlugin {
     private JDA jda;
     private PluginStatus pluginStatus;
     private ConfigChecker configChecker;
+    private final List<Integer> tasks = new ArrayList<>();
 
     @Override
     public void onEnable() {
@@ -74,6 +77,11 @@ public final class RoleSync extends JavaPlugin {
     @Override
     public void onDisable() {
         if (jda != null && jda.getStatus() == JDA.Status.CONNECTED) jda.shutdown();
+        if (!tasks.isEmpty()) {
+            for (int taskId : tasks) {
+                getServer().getScheduler().cancelTask(taskId);
+            }
+        }
     }
 
     public final FileStorage getMessages() {
@@ -106,7 +114,8 @@ public final class RoleSync extends JavaPlugin {
 
     public void startBot() {
         try {
-            this.jda = new JDABuilder(AccountType.BOT).setToken(getConfig().getString("bot-token")).addEventListeners(new ReadyListener(this)).build();
+            this.jda = JDABuilder.createDefault(getConfig().getString("bot-token"))
+                    .setMemberCachePolicy(MemberCachePolicy.ALL).addEventListeners(new ReadyListener(this)).build();
         } catch (LoginException e) {
             getLogger().log(Level.SEVERE, "Error when logging in!");
             disablePlugin();
@@ -151,4 +160,7 @@ public final class RoleSync extends JavaPlugin {
 
     }
 
+    public void addTask(int taskId) {
+        tasks.add(taskId);
+    }
 }
