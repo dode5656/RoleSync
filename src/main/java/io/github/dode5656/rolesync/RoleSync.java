@@ -12,6 +12,7 @@ import io.github.dode5656.rolesync.utilities.MessageManager;
 import io.github.dode5656.rolesync.utilities.PluginStatus;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
+import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.configuration.InvalidConfigurationException;
@@ -114,7 +115,7 @@ public final class RoleSync extends JavaPlugin {
 
     public void startBot() {
         try {
-            this.jda = JDABuilder.createDefault(getConfig().getString("bot-token"))
+            this.jda = JDABuilder.createDefault(getConfig().getString("bot-token")).enableIntents(GatewayIntent.GUILD_MEMBERS)
                     .setMemberCachePolicy(MemberCachePolicy.ALL).addEventListeners(new ReadyListener(this)).build();
         } catch (LoginException e) {
             getLogger().log(Level.SEVERE, "Error when logging in!");
