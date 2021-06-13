@@ -16,7 +16,7 @@ public final class MessageManager {
 
     public final String color(String message) {
 
-        if (Integer.parseInt(this.plugin.getServer().getVersion().split("\\.")[1]) >= 16) { // Check if 1.16+
+        if (Integer.parseInt(plugin.getServer().getVersion().split("\\.")[1].replaceAll("\\)","")) >= 16) { // Check if 1.16+
             return ChatColor.translateAlternateColorCodes('&', convertHexToColor(message));
         }
 
