@@ -64,11 +64,9 @@ public final class SyncCommand implements CommandExecutor {
         final Guild guild = jda.getGuildById(plugin.getConfig().getString("server-id"));
 
         if (guild == null) {
-
             sender.sendMessage(messageManager.format(Message.ERROR));
             plugin.getLogger().severe(Message.INVALID_SERVER_ID.getMessage());
             return true;
-
         }
 
         BukkitRunnable runnable = new BukkitRunnable() {
@@ -85,23 +83,17 @@ public final class SyncCommand implements CommandExecutor {
         }
 
         if (member == null) {
-
             boolean result = false;
-
             if (args[0].equals("id")) {
-
                 Member idMember = guild.retrieveMemberById(args[1]).complete();
                 if (idMember != null) {
                     member = idMember;
                     result = true;
                 }
-
             }
-
             if (!result) {
                 sender.sendMessage(messageManager.replacePlaceholders(messageManager.format(Message.BAD_NAME),
                         args[0], sender.getName(), guild.getName()));
-
                 return true;
             }
         }
@@ -117,20 +109,10 @@ public final class SyncCommand implements CommandExecutor {
             Map<String, Object> roles = plugin.getConfig().getConfigurationSection("roles").getValues(false);
             Collection<Role> added = new ArrayList<>();
             Collection<Role> removed = new ArrayList<>();
-            for (Map.Entry<String, Object> entry : roles.entrySet()) {
-                String key = entry.getKey();
-                Object value = entry.getValue();
-                Role role = guild.getRoleById((String) value);
-                if (role == null) continue;
-                if (player.hasPermission("rolesync.role." + key) && !memberRoles.contains(guild.getRoleById((String) value))) {
-                    added.add(role);
-                } else if (!player.hasPermission("rolesync.role." + key) && memberRoles.contains(guild.getRoleById((String) value))) {
-                    removed.add(role);
-                }
+            plugin.getUtil().populateAddedRemoved(guild,roles,player,memberRoles,added,removed);
 
-            }
-
-            if (added.isEmpty() && removed.isEmpty()) {
+            String nickname = this.plugin.getConfig().getString("nickname-format").replaceAll("\\{ign}", player.getName());
+            if (added.isEmpty() && removed.isEmpty() && member.getNickname() != null && member.getNickname().equals(nickname)) {
                 player.sendMessage(messageManager.replacePlaceholders(
                         messageManager.format(Message.ALREADY_VERIFIED),
                         member.getUser().getAsTag(), sender.getName(), guild.getName()));
@@ -138,10 +120,10 @@ public final class SyncCommand implements CommandExecutor {
                 return true;
             }
 
-            guild.modifyMemberRoles(member, added, removed).queue();
-            String nickname = this.plugin.getConfig().getString("nickname-format").replaceAll("\\{ign}", player.getName());
-            if (this.plugin.getConfig().getBoolean("change-nickname") && (member.getNickname() == null || !member.getNickname().equals(nickname)))
-                member.modifyNickname(nickname).queue();
+            if (!added.isEmpty() || !removed.isEmpty())
+                if (!plugin.getUtil().modifyMemberRoles(guild,member,added,removed,player)) return true;
+            if (this.plugin.getConfig().getBoolean("change-nickname"))
+                if (!plugin.getUtil().changeNickname(guild,member,player)) return true;
             player.sendMessage(messageManager.format(Message.UPDATED_ROLES));
 
             return true;

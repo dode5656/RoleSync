@@ -57,6 +57,21 @@ public final class Util {
         return true;
     }
 
+    public void populateAddedRemoved(Guild guild, Map<String, Object> roles, Player player, List<Role> memberRoles, Collection<Role> added, Collection<Role> removed) {
+        for (Map.Entry<String, Object> entry : roles.entrySet()) {
+            String key = entry.getKey();
+            String value = (String) entry.getValue();
+            Role role = guild.getRoleById(value);
+            if (role == null) continue;
+            if (player.hasPermission("rolesync.role." + key) && !memberRoles.contains(role)) {
+                added.add(role);
+            } else if (removed != null && !player.hasPermission("rolesync.role." + key) && memberRoles.contains(role)) {
+                removed.add(role);
+            }
+
+        }
+    }
+
     public void joinEvent(Player player) {
         if (plugin.getPluginStatus() == PluginStatus.DISABLED) return;
         JDA jda = plugin.getJDA();
@@ -80,25 +95,15 @@ public final class Util {
             Map<String, Object> roles = plugin.getConfig().getConfigurationSection("roles").getValues(false);
             Collection<Role> added = new ArrayList<>();
             Collection<Role> removed = new ArrayList<>();
-            for (Map.Entry<String, Object> entry : roles.entrySet()) {
-                String key = entry.getKey();
-                String value = (String) entry.getValue();
-                Role role = guild.getRoleById(value);
-                if (role == null) continue;
-                if (player.hasPermission("rolesync.role." + key) && !memberRoles.contains(guild.getRoleById(value))) {
-                    added.add(role);
-                } else if (!player.hasPermission("rolesync.role." + key) && memberRoles.contains(guild.getRoleById((value)))) {
-                    removed.add(role);
-                }
+            populateAddedRemoved(guild,roles,player,memberRoles,added,removed);
 
-            }
+            if (!added.isEmpty() || !removed.isEmpty())
+                if (!modifyMemberRoles(guild,member,added,removed,player)) return;
 
-            if (added.isEmpty() && removed.isEmpty()) return;
-
-            if (!modifyMemberRoles(guild,member,added,removed,player)) return;
             String nickname = this.plugin.getConfig().getString("nickname-format").replaceAll("\\{ign}", player.getName());
             if (this.plugin.getConfig().getBoolean("change-nickname") && (member.getNickname() == null || !member.getNickname().equals(nickname)))
                 if (!changeNickname(guild,member,player)) return;
+
             player.sendMessage(messageManager.format(Message.UPDATED_ROLES));
         }
     }
