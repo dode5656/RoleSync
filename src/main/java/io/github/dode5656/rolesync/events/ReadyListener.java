@@ -8,7 +8,7 @@ import net.dv8tion.jda.api.hooks.EventListener;
 
 import javax.annotation.Nonnull;
 
-public class ReadyListener implements EventListener {
+public final class ReadyListener implements EventListener {
 
     private final RoleSync plugin;
 

@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
 
-public class UnSyncCommand implements CommandExecutor {
+public final class UnSyncCommand implements CommandExecutor {
 
     private final RoleSync plugin;
     private JDA jda;

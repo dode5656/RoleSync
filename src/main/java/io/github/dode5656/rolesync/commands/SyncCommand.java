@@ -16,7 +16,6 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -68,13 +67,6 @@ public final class SyncCommand implements CommandExecutor {
             plugin.getLogger().severe(Message.INVALID_SERVER_ID.getMessage());
             return true;
         }
-
-        BukkitRunnable runnable = new BukkitRunnable() {
-            public void run() {
-                guild.loadMembers().get();
-            }
-        };
-        plugin.addTask(runnable.runTaskAsynchronously(plugin).getTaskId());
 
         Member member = null;
         try {
