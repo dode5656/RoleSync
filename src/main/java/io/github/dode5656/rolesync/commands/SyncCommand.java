@@ -187,10 +187,10 @@ public final class SyncCommand implements CommandExecutor {
                         }
                     }
 
-                    guild.modifyMemberRoles(finalMember, added, null).queue();
+                    if (!plugin.getUtil().modifyMemberRoles(guild,finalMember,added,null,player)) return;
+
                     if (plugin.getConfig().getBoolean("change-nickname"))
-                        finalMember.modifyNickname(plugin.getConfig().getString("nickname-format")
-                                .replaceAll("\\{ign}", player.getName())).queue();
+                        if (!plugin.getUtil().changeNickname(guild,finalMember,player)) return;
 
                     sender.sendMessage(messageManager.replacePlaceholders(
                             messageManager.format(Message.VERIFIED_MINECRAFT),

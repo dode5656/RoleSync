@@ -26,7 +26,8 @@ public enum Message {
     NOT_SYNCED("messages.not-synced"),
     UNSYNCED_SUCCESSFULLY("messages.unsynced-successfully"),
     DM_FAILED("messages.dm-failed"),
-    REQUEST_REPLY("messages.request-reply");
+    REQUEST_REPLY("messages.request-reply"),
+    HIERARCHY_ERROR("messages.hierarchy-error");
     private final String key;
 
     Message(String s) {

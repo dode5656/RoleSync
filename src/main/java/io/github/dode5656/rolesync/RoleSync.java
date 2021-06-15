@@ -10,6 +10,7 @@ import io.github.dode5656.rolesync.storage.FileStorage;
 import io.github.dode5656.rolesync.utilities.ConfigChecker;
 import io.github.dode5656.rolesync.utilities.MessageManager;
 import io.github.dode5656.rolesync.utilities.PluginStatus;
+import io.github.dode5656.rolesync.utilities.Util;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.requests.GatewayIntent;
@@ -35,6 +36,7 @@ public final class RoleSync extends JavaPlugin {
     private JDA jda;
     private PluginStatus pluginStatus;
     private ConfigChecker configChecker;
+    private Util util;
     private final List<Integer> tasks = new ArrayList<>();
 
     @Override
@@ -51,6 +53,8 @@ public final class RoleSync extends JavaPlugin {
 
         configChecker = new ConfigChecker(this);
         configChecker.checkDefaults();
+
+        util = new Util(this);
 
         startBot();
 
@@ -112,6 +116,8 @@ public final class RoleSync extends JavaPlugin {
     public ConfigChecker getConfigChecker() {
         return configChecker;
     }
+
+    public Util getUtil() { return util; }
 
     public void startBot() {
         try {
