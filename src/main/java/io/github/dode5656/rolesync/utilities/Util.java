@@ -39,9 +39,13 @@ public final class Util {
     }
 
     public boolean changeNickname(Guild guild, Member member, Player player) {
+        return changeNickname(guild,member,player,plugin.getConfig().getString("nickname-format")
+                .replaceAll("\\{ign}", player.getName()));
+    }
+
+    public boolean changeNickname(Guild guild, Member member, Player player, String nickname) {
         try {
-            member.modifyNickname(plugin.getConfig().getString("nickname-format")
-                    .replaceAll("\\{ign}", player.getName())).queue();
+            member.modifyNickname(nickname).queue();
         } catch (InsufficientPermissionException | HierarchyException e) {
             player.sendMessage(plugin.getMessageManager().format(Message.ERROR));
             if (e instanceof InsufficientPermissionException) {

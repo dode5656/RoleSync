@@ -64,16 +64,12 @@ public final class UnSyncCommand implements CommandExecutor {
             return;
         }
 
-
         Guild guild = jda.getGuildById(plugin.getConfig().getString("server-id"));
 
         if (guild == null) {
-
             player.sendMessage(plugin.getMessageManager().format(Message.ERROR));
             plugin.getLogger().severe(Message.INVALID_SERVER_ID.getMessage());
-
             return;
-
         }
 
         Member member = guild.retrieveMemberById(plugin.getPlayerCache().read().getString("verified." + player.getUniqueId().toString())).complete();
@@ -93,7 +89,8 @@ public final class UnSyncCommand implements CommandExecutor {
 
         if (removed.isEmpty()) return;
 
-        guild.modifyMemberRoles(member, null, removed).queue();
+        if(!plugin.getUtil().modifyMemberRoles(guild,member,null,removed,player)) return;
+        if(!plugin.getUtil().changeNickname(guild,member,player,null)) return;
 
         plugin.getPlayerCache().read().set("verified."+player.getUniqueId().toString() ,null);
 
