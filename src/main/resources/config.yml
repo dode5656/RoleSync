@@ -30,7 +30,3 @@ opt-out-bstats: false
 # Whether you want the bot to change nickname to in game name
 change-nickname: false
 nickname-format: "[Donator] {ign}" # Placeholders: {ign}
-
-# Time between each discord cache reload. This is important, only set it high if it starts lagging your server. IN MINUTES
-# NOTE: If you set it very high it will lead to users not being able to sync for the first time successfully.
-members-cache-reload: 5

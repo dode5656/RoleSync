@@ -13,7 +13,6 @@ import io.github.dode5656.rolesync.utilities.PluginStatus;
 import io.github.dode5656.rolesync.utilities.Util;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
-import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import org.bstats.bukkit.Metrics;
@@ -21,13 +20,10 @@ import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import javax.security.auth.login.LoginException;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.logging.Level;
 
 public final class RoleSync extends JavaPlugin {
@@ -39,7 +35,6 @@ public final class RoleSync extends JavaPlugin {
     private PluginStatus pluginStatus;
     private ConfigChecker configChecker;
     private Util util;
-    private final List<Integer> tasks = new ArrayList<>();
 
     @Override
     public void onEnable() {
@@ -65,39 +60,20 @@ public final class RoleSync extends JavaPlugin {
         getCommand("unsync").setExecutor(new UnSyncCommand(this));
 
         if (getServer().getPluginManager().getPlugin("AuthMe") != null) {
-
             getServer().getPluginManager().registerEvents(new AuthMeLoginEvent(this),this);
-
         } else {
-
             getServer().getPluginManager().registerEvents(new JoinEvent(this), this);
-
         }
 
         if (!getConfig().getBoolean("opt-out-bstats", false)) {
             int pluginId = 6790;
             Metrics metrics = new Metrics(this, pluginId);
         }
-
-        BukkitRunnable runnable = new BukkitRunnable() {
-            public void run() {
-                Guild guild = jda.getGuildById(getConfig().getString("server-id"));
-                if (guild==null) return;
-                guild.loadMembers().get();
-            }
-        };
-        addTask(runnable.runTaskTimerAsynchronously(this, 0L, getConfig().getInt("members-cache-reload",5)*60L*20L).getTaskId());
-
     }
 
     @Override
     public void onDisable() {
         if (jda != null && jda.getStatus() == JDA.Status.CONNECTED) jda.shutdown();
-        if (!tasks.isEmpty()) {
-            for (int taskId : tasks) {
-                getServer().getScheduler().cancelTask(taskId);
-            }
-        }
     }
 
     public final FileStorage getMessages() {
@@ -173,12 +149,6 @@ public final class RoleSync extends JavaPlugin {
             file.renameTo(new File(getDataFolder().getPath()+File.separator+"old",
                     "old_"+file.getName()));
         }
-
         super.saveDefaultConfig();
-
-    }
-
-    public void addTask(int taskId) {
-        tasks.add(taskId);
     }
 }
