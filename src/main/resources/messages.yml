@@ -7,7 +7,7 @@ messages:
   deniedMinecraft: "Failed to verify you with: {discord_tag}. User denied the request."
   deniedDiscord: "Oh ok! Seems that you don't want to verify yourself or that someone has made a request to your account. Cancelling request!"
   error: "An error occurred. Please report to the Administrators about the issue."
-  badName: "Please provide a valid discord name that is in the {discord_server_name} discord server."
+  badName: "Please provide a valid discord name that is in the {discord_server_name} discord server. If this is wrong, please try sending a message in any channel and trying again."
   tooLongMC: "Uh oh! You took longer than 2 minutes to verify. To verify yourself you have to run the command again."
   tooLongDiscord: "Uh oh! You took longer than 2 minutes to reply. To verify yourself you have to run the command in the server again."
   alreadyVerified: "You are already verified in this Discord/MC account."
