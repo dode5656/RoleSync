@@ -31,12 +31,12 @@ repositories {
 }
 
 dependencies {
-    compile ('net.dv8tion:JDA:4.2.1_273') {
+    implementation ('net.dv8tion:JDA:4.2.1_273') {
         exclude module: 'opus-java'
     }
     implementation 'com.jagrosh:jda-utilities-commons:3.0.2'
     implementation 'org.bstats:bstats-bukkit:1.7'
-    implementation 'org.slf4j:slf4j-jdk14:1.7.30'
+    runtimeOnly 'org.slf4j:slf4j-jdk14:1.7.30'
     compileOnly 'fr.xephi:authme:5.6.0-beta1'
     compileOnly 'org.spigotmc:spigot-api:1.8.8-R0.1-SNAPSHOT'
     compileOnly 'ch.jalu:configme:1.1.0'
@@ -50,7 +50,8 @@ sourceCompatibility = '1.8'
 shadowJar {
     relocate "org.slf4j", "io.github.dode5656.libs.slf4j"
     relocate "org.bstats", "io.github.dode5656.libs.bstats"
-    relocate "com.jagrosh", "io.github.dode5656.libs.jda"
+    relocate "com.jagrosh", "io.github.dode5656.libs.jdautils"
+    relocate "net.dv8tion", "io.github.dode5656.libs.jda"
     classifier = ""
     minimize()
 }
