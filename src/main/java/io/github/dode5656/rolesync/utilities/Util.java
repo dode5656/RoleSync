@@ -100,15 +100,19 @@ public final class Util {
             Collection<Role> added = new ArrayList<>();
             Collection<Role> removed = new ArrayList<>();
             populateAddedRemoved(guild,roles,player,memberRoles,added,removed);
-
-            if (!added.isEmpty() || !removed.isEmpty())
-                if (!modifyMemberRoles(guild,member,added,removed,player)) return;
+            boolean changed = false;
+            if (!added.isEmpty() || !removed.isEmpty()) {
+                if (!modifyMemberRoles(guild, member, added, removed, player)) return;
+                changed = true;
+            }
 
             String nickname = this.plugin.getConfig().getString("nickname-format").replaceAll("\\{ign}", player.getName());
-            if (this.plugin.getConfig().getBoolean("change-nickname") && (member.getNickname() == null || !member.getNickname().equals(nickname)))
-                if (!changeNickname(guild,member,player)) return;
+            if (this.plugin.getConfig().getBoolean("change-nickname") && (member.getNickname() == null || !member.getNickname().equals(nickname))) {
+                if (!changeNickname(guild, member, player)) return;
+                changed = true;
+            }
 
-            player.sendMessage(messageManager.format(Message.UPDATED_ROLES));
+            if (changed) player.sendMessage(messageManager.format(Message.UPDATED_ROLES));
         }
     }
 
