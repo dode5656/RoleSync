@@ -1,19 +1,21 @@
 package io.github.dode5656.rolesync.utilities;
 
 import io.github.dode5656.rolesync.RoleSync;
+import io.github.dode5656.rolesync.storage.FileStorage;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.exceptions.HierarchyException;
 import net.dv8tion.jda.api.exceptions.InsufficientPermissionException;
+import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.io.File;
+import java.io.IOException;
+import java.util.*;
 import java.util.logging.Level;
 
 public final class Util {
@@ -114,6 +116,50 @@ public final class Util {
 
             if (changed) player.sendMessage(messageManager.format(Message.UPDATED_ROLES));
         }
+    }
+
+    public boolean saveDefaults(File file, FileStorage fileStorage) {
+        if (!file.exists()) {
+            return false;
+        }
+        FileConfiguration tempConfig = new YamlConfiguration();
+        try {
+            tempConfig.load(new File(plugin.getDataFolder().getPath(),"config.yml"));
+        } catch (IOException | InvalidConfigurationException e) {
+            plugin.getLogger().log(Level.SEVERE, "Couldn't load config.yml", e);
+            return false;
+        }
+        if (tempConfig.getString("version") != null) {
+            String configVersion = tempConfig.getString("version");
+            Version[] versions = Version.values();
+            for (Version version : versions) {
+                if (version.getVersion().equals(configVersion)) {
+                    if (!version.configUpdated()) {
+                        if (fileStorage != null) {
+                            fileStorage.reload();
+                        } else {
+                            plugin.reloadConfig();
+                        }
+                        return true;
+                    }
+                    break;
+                }
+            }
+        }
+        moveToOld(file);
+        return false;
+    }
+
+    public void moveToOld(File file) {
+
+        File oldDir = new File(plugin.getDataFolder().getPath(),"old");
+
+        if (!oldDir.exists()) {
+            oldDir.mkdirs();
+        }
+
+        file.renameTo(new File(plugin.getDataFolder().getPath()+File.separator+"old",
+                "old_"+file.getName()));
     }
 
 }

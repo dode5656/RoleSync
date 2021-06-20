@@ -39,19 +39,18 @@ public final class RoleSync extends JavaPlugin {
     @Override
     public void onEnable() {
         pluginStatus = PluginStatus.ENABLED;
+        util = new Util(this);
 
+        messages = new FileStorage("messages.yml", new File(getDataFolder().getPath()),this);
+        messages.saveDefaults(this);
         saveDefaultConfig();
 
         playerCache = new FileStorage("playerCache.yml", new File(getDataFolder().getPath(), "cache"),this);
 
-        messages = new FileStorage("messages.yml", new File(getDataFolder().getPath()),this);
-        messages.saveDefaults(this);
         messageManager = new MessageManager(this);
 
         configChecker = new ConfigChecker(this);
         configChecker.checkDefaults();
-
-        util = new Util(this);
 
         startBot();
 
@@ -123,32 +122,6 @@ public final class RoleSync extends JavaPlugin {
     @Override
     public void saveDefaultConfig() {
         File file = new File(getDataFolder().getPath(),"config.yml");
-
-        if (file.exists()) {
-
-            FileConfiguration tempConfig = new YamlConfiguration();
-            try {
-                tempConfig.load(file);
-            } catch (IOException | InvalidConfigurationException e) {
-                getLogger().log(Level.SEVERE, "Couldn't load config.yml", e);
-            }
-
-            if (tempConfig.getString("version") != null &&
-                    tempConfig.getString("version").equals(getDescription().getVersion())) {
-                reloadConfig();
-                return;
-            }
-
-            File oldDir = new File(getDataFolder().getPath(),"old");
-
-            if (!oldDir.exists()) {
-                oldDir.mkdirs();
-            }
-
-
-            file.renameTo(new File(getDataFolder().getPath()+File.separator+"old",
-                    "old_"+file.getName()));
-        }
-        super.saveDefaultConfig();
+        if (!util.saveDefaults(file, null)) super.saveDefaultConfig();
     }
 }

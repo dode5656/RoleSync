@@ -44,35 +44,10 @@ public final class FileStorage {
     }
 
     public final void saveDefaults(RoleSync main) {
-
-        if (this.file.exists()) {
-            FileConfiguration tempConfig = new YamlConfiguration();
-            try {
-                tempConfig.load(new File(main.getDataFolder().getPath(),"config.yml"));
-            } catch (IOException | InvalidConfigurationException e) {
-                logger.log(Level.SEVERE, "Couldn't load config.yml", e);
-            }
-
-            if (tempConfig.getString("version") != null &&
-                    tempConfig.getString("version").equals(main.getDescription().getVersion())) {
-                reload();
-                return;
-            }
-
-            File oldDir = new File(main.getDataFolder().getPath(),"old");
-
-            if (!oldDir.exists()) {
-                oldDir.mkdirs();
-            }
-
-            this.file.renameTo(new File(main.getDataFolder().getPath()+File.separator+"old",
-                    "old_"+this.file.getName()));
-
+        if (!main.getUtil().saveDefaults(file, this)) {
+            main.saveResource(this.file.getName(), false);
+            reload();
         }
-
-        main.saveResource(this.file.getName(), false);
-        reload();
-
     }
 
 }
