@@ -5,6 +5,7 @@ public enum Message {
     PREFIX("prefix"),
     PLAYER_ONLY("messages.player-only"),
     NO_PERM_CMD("messages.no-perm-cmd"),
+    TEMP_GROUP("messages.temp-group"),
     VERIFY_REQUEST("messages.verifyRequest"),
     VERIFIED_MINECRAFT("messages.verifiedMinecraft"),
     VERIFIED_DISCORD("messages.verifiedDiscord"),
@@ -27,6 +28,7 @@ public enum Message {
     UNSYNCED_SUCCESSFULLY("messages.unsynced-successfully"),
     DM_FAILED("messages.dm-failed"),
     REQUEST_REPLY("messages.request-reply"),
+    COOLDOWN("messages.cooldown"),
     HIERARCHY_ERROR("messages.hierarchy-error");
     private final String key;
 

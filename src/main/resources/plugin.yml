@@ -1,32 +1,19 @@
 name: RoleSync
-version: 1.2.0-BETA-1.3.1
+version: 2.0
+api-version: 1.16
 author: dode5656
 main: io.github.dode5656.rolesync.RoleSync
 description: Plugin that links discord and minecraft and gives roles to the user in the server's discord.
 softdepend:
-  - AuthMeReloaded
+  - LuckPerms
 commands:
   sync:
-    permission: rolesync.use
-    permission-message: You don't have enough permissions to use this command!
-    description: Gives the user role(s) in discord if they have the permission(s) in the server.
+    usage: /<command> [name]
+    aliases: []
   syncreload:
     permission: rolesync.reload
-    permission-message: You don't have enough permissions to use this command!
-    description: Reloads the RoleSync config.
-    usage: /<command>
-    aliases: ['rreload', 'sreload', 'rolesyncreload']
+    usage: /<command> [name]
+    aliases: []
   unsync:
-    permission: rolesync.unsync
-    permission-message: You don't have enough permissions to use this command!
-    description: Allows user to unsync themselves.
-    usage: /<command> (player)
-permissions:
-  rolesync.use:
-    description: Gives access to use the /sync command to get verified in discord server.
-  rolesync.reload:
-    description: Gives access to reload the config of the plugin
-  rolesync.unsync:
-    description: Gives access to unsync yourself.
-  rolesync.unsync.others:
-    description: Gives access to unsync other players.
+    usage: /<command> [name]
+    aliases: []
