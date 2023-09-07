@@ -11,11 +11,13 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
+import java.util.logging.Level;
 
 public final class UnSyncCommand implements CommandExecutor {
 
@@ -38,8 +40,12 @@ public final class UnSyncCommand implements CommandExecutor {
         }
 
         if (sender.hasPermission("rolesync.unsync.others")) {
-            if (!(args.length >= 1)) {
-                unsync((Player) sender);
+            if (args.length < 1) {
+                if (sender instanceof ConsoleCommandSender) {
+                    sender.sendMessage(plugin.getMessageManager().format(Message.PLAYER_ONLY));
+                    return true;
+                }
+                unsync((Player) sender, sender);
                 return true;
             }
 
@@ -50,25 +56,27 @@ public final class UnSyncCommand implements CommandExecutor {
                 return true;
             }
 
-            unsync(player);
+            unsync(player, sender);
         } else {
-            unsync((Player) sender);
+            unsync((Player) sender, sender);
         }
 
         return true;
     }
 
-    private void unsync(Player player) {
+    private void unsync(Player player, CommandSender sender) {
         if (!(plugin.getPlayerCache().read() != null && plugin.getPlayerCache().read().contains("verified." + player.getUniqueId().toString()))) {
-            player.sendMessage(plugin.getMessageManager().format(Message.NOT_SYNCED));
+            sender.sendMessage(plugin.getMessageManager().format(Message.NOT_SYNCED));
             return;
         }
 
         Guild guild = jda.getGuildById(plugin.getConfig().getString("server-id"));
 
         if (guild == null) {
-            player.sendMessage(plugin.getMessageManager().format(Message.ERROR));
-            plugin.getLogger().severe(Message.INVALID_SERVER_ID.getMessage());
+
+            sender.sendMessage(plugin.getMessageManager().format(Message.ERROR));
+            plugin.getLogger().severe(plugin.getMessageManager().format(Message.INVALID_SERVER_ID));
+
             return;
         }
 
@@ -97,7 +105,8 @@ public final class UnSyncCommand implements CommandExecutor {
         plugin.getPlayerCache().save();
         plugin.getPlayerCache().reload();
 
-        player.sendMessage(plugin.getMessageManager().format(Message.UNSYNCED_SUCCESSFULLY));
+        sender.sendMessage(plugin.getMessageManager().replacePlaceholders(plugin.getMessageManager().format(Message.UNSYNCED_SUCCESSFULLY),member
+                .getUser().getAsTag(), sender.getName(), guild.getName()));
 
     }
 

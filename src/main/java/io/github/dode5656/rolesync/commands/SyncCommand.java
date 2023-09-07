@@ -65,7 +65,7 @@ public final class SyncCommand implements CommandExecutor {
 
         if (guild == null) {
             sender.sendMessage(messageManager.format(Message.ERROR));
-            plugin.getLogger().severe(Message.INVALID_SERVER_ID.getMessage());
+            plugin.getLogger().severe(messageManager.format(Message.INVALID_SERVER_ID));
             return true;
         }
 
@@ -104,7 +104,8 @@ public final class SyncCommand implements CommandExecutor {
             Collection<Role> removed = new ArrayList<>();
             plugin.getUtil().populateAddedRemoved(guild,roles,player,memberRoles,added,removed);
 
-            String nickname = this.plugin.getConfig().getString("nickname-format").replaceAll("\\{ign}", player.getName());
+            String nickname = plugin.getMessageManager().replaceDiscordPlaceholders(plugin.getConfig().getString("nickname-format")
+                    .replaceAll("\\{ign}", player.getName()),member.getUser().getAsTag(),player.getName(),guild.getName());
             if (added.isEmpty() && removed.isEmpty() && member.getNickname() != null && member.getNickname().equals(nickname)) {
                 player.sendMessage(messageManager.replacePlaceholders(
                         messageManager.format(Message.ALREADY_VERIFIED),

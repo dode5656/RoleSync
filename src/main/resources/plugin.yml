@@ -5,6 +5,7 @@ main: io.github.dode5656.rolesync.RoleSync
 description: Plugin that links discord and minecraft and gives roles to the user in the server's discord.
 softdepend:
   - AuthMeReloaded
+  - PlaceholderAPI
 commands:
   sync:
     permission: rolesync.use

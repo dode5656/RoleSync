@@ -41,8 +41,8 @@ public final class Util {
     }
 
     public boolean changeNickname(Guild guild, Member member, Player player) {
-        return changeNickname(guild,member,player,plugin.getConfig().getString("nickname-format")
-                .replaceAll("\\{ign}", player.getName()));
+        return changeNickname(guild,member,player,plugin.getMessageManager().replaceDiscordPlaceholders(plugin.getConfig().getString("nickname-format")
+                .replaceAll("\\{ign}", player.getName()),member.getUser().getAsTag(),player.getName(),guild.getName()));
     }
 
     public boolean changeNickname(Guild guild, Member member, Player player, String nickname) {
@@ -90,7 +90,7 @@ public final class Util {
 
             if (guild == null) {
                 player.sendMessage(messageManager.format(Message.ERROR));
-                plugin.getLogger().severe(Message.INVALID_SERVER_ID.getMessage());
+                plugin.getLogger().severe(messageManager.format(Message.INVALID_SERVER_ID));
                 return;
             }
 
@@ -108,7 +108,8 @@ public final class Util {
                 changed = true;
             }
 
-            String nickname = this.plugin.getConfig().getString("nickname-format").replaceAll("\\{ign}", player.getName());
+            String nickname = plugin.getMessageManager().replaceDiscordPlaceholders(plugin.getConfig().getString("nickname-format")
+                    .replaceAll("\\{ign}", player.getName()),member.getUser().getAsTag(),player.getName(),guild.getName());
             if (this.plugin.getConfig().getBoolean("change-nickname") && (member.getNickname() == null || !member.getNickname().equals(nickname))) {
                 if (!changeNickname(guild, member, player)) return;
                 changed = true;

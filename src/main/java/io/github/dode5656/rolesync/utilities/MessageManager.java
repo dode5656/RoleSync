@@ -1,6 +1,8 @@
 package io.github.dode5656.rolesync.utilities;
 
 import io.github.dode5656.rolesync.RoleSync;
+import me.clip.placeholderapi.PlaceholderAPI;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 
@@ -36,10 +38,25 @@ public final class MessageManager {
     public final String formatDiscord(Message msg) { return plugin.getMessages().read().getString(msg.getMessage()); }
 
     public final String replacePlaceholders(String msg, String discordTag, String playerName, String guildName) {
-        return color(msg
+        String temp = msg
                 .replaceAll("\\{discord_tag}", Matcher.quoteReplacement(discordTag))
                 .replaceAll("\\{player_name}", Matcher.quoteReplacement(playerName))
-                .replaceAll("\\{discord_server_name}", Matcher.quoteReplacement(guildName)));
+                .replaceAll("\\{discord_server_name}", Matcher.quoteReplacement(guildName));
+        if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
+            return color(PlaceholderAPI.setPlaceholders(Bukkit.getPlayer(playerName), temp));
+        }
+        return color(temp);
+    }
+
+    public final String replaceDiscordPlaceholders(String msg, String discordTag, String playerName, String guildName) {
+        String temp = msg
+                .replaceAll("\\{discord_tag}", Matcher.quoteReplacement(discordTag))
+                .replaceAll("\\{player_name}", Matcher.quoteReplacement(playerName))
+                .replaceAll("\\{discord_server_name}", Matcher.quoteReplacement(guildName));
+        if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
+            return PlaceholderAPI.setPlaceholders(Bukkit.getPlayer(playerName), temp);
+        }
+        return temp;
     }
 
     public final String defaultError(String value) {
