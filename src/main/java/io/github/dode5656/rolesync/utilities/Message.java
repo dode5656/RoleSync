@@ -27,7 +27,10 @@ public enum Message {
     UNSYNCED_SUCCESSFULLY("messages.unsynced-successfully"),
     DM_FAILED("messages.dm-failed"),
     REQUEST_REPLY("messages.request-reply"),
-    HIERARCHY_ERROR("messages.hierarchy-error");
+    HIERARCHY_ERROR("messages.hierarchy-error"),
+    YESBUTTON("messages.yesbutton"),
+    NOBUTTON("messages.nobutton"),
+    EMBED_TITLE("messages.embed-title");
     private final String key;
 
     Message(String s) {

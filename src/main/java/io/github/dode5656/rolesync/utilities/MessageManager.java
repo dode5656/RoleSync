@@ -16,7 +16,7 @@ public final class MessageManager {
         this.plugin = plugin;
     }
 
-    public final String color(String message) {
+    public String color(String message) {
 
         if (Integer.parseInt(plugin.getServer().getVersion().split("\\.")[1].replaceAll("\\)","")) >= 16) { // Check if 1.16+
             return ChatColor.translateAlternateColorCodes('&', convertHexToColor(message));
@@ -25,19 +25,19 @@ public final class MessageManager {
         return ChatColor.translateAlternateColorCodes('&', message);
     }
 
-    public final String usage(Command cmd) {
+    public String usage(Command cmd) {
         return color(plugin.getConfig().getString(Message.PREFIX.getMessage())) + cmd.getUsage();
     }
 
-    public final String format(String msg) {
+    public String format(String msg) {
         return color(plugin.getConfig().getString(Message.PREFIX.getMessage())) + color(msg);
     }
 
-    public final String format(Message msg) { return format(plugin.getMessages().read().getString(msg.getMessage())); }
+    public String format(Message msg) { return format(plugin.getMessages().read().getString(msg.getMessage())); }
 
-    public final String formatDiscord(Message msg) { return plugin.getMessages().read().getString(msg.getMessage()); }
+    public String formatDiscord(Message msg) { return plugin.getMessages().read().getString(msg.getMessage()); }
 
-    public final String replacePlaceholders(String msg, String discordTag, String playerName, String guildName) {
+    public String replacePlaceholders(String msg, String discordTag, String playerName, String guildName) {
         String temp = msg
                 .replaceAll("\\{discord_tag}", Matcher.quoteReplacement(discordTag))
                 .replaceAll("\\{player_name}", Matcher.quoteReplacement(playerName))
@@ -48,18 +48,19 @@ public final class MessageManager {
         return color(temp);
     }
 
-    public final String replaceDiscordPlaceholders(String msg, String discordTag, String playerName, String guildName) {
+    public String replaceDiscordPlaceholders(String msg, String discordTag, String playerName, String guildName) {
         String temp = msg
                 .replaceAll("\\{discord_tag}", Matcher.quoteReplacement(discordTag))
                 .replaceAll("\\{player_name}", Matcher.quoteReplacement(playerName))
                 .replaceAll("\\{discord_server_name}", Matcher.quoteReplacement(guildName));
         if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
-            return PlaceholderAPI.setPlaceholders(Bukkit.getPlayer(playerName), temp);
+            temp = PlaceholderAPI.setPlaceholders(Bukkit.getPlayer(playerName), temp);
         }
-        return temp;
+        return ChatColor.stripColor(ChatColor.translateAlternateColorCodes('&',
+                convertHexToColor(temp)));
     }
 
-    public final String defaultError(String value) {
+    public String defaultError(String value) {
         return plugin.getMessages().read().getString(Message.DEFAULT_VALUE.getMessage()).replaceAll("\\{value}", value);
     }
 

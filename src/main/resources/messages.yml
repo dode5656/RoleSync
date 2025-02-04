@@ -1,7 +1,7 @@
 # Placeholders: {discord_tag}, {player_name}, {discord_server_name}
 # Feel free to replace the messages to your choice.
 messages:
-  verifyRequest: "Hey! A user with the minecraft name `{player_name}` has made a request to verify their account and receive a special rank in the {discord_server_name} server. Did you make this request? Reply with `Yes` or `No`. You have 2 minutes to reply."
+  verifyRequest: "Hey! A user with the minecraft name `{player_name}` has made a request to verify their account and receive a special rank in the {discord_server_name} server. Did you make this request? You have 2 minutes to reply."
   verifiedMinecraft: "Your account has been verified with the discord user: {discord_tag}"
   verifiedDiscord: "Your account has been verified with the minecraft user: {player_name}"
   deniedMinecraft: "Failed to verify you with: {discord_tag}. User denied the request."
@@ -26,3 +26,6 @@ messages:
   dm-failed: "Could not DM user! User has DMs closed."
   request-reply: "Successfully messaged user. Check your DMs!"
   hierarchy-error: "Failed to change nickname/role due to Discord Role Hierarchy problems."
+  yesbutton: "Yes"
+  nobutton: "No"
+  embed-title: "Verify Request"

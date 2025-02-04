@@ -9,17 +9,14 @@ softdepend:
 commands:
   sync:
     permission: rolesync.use
-    permission-message: You don't have enough permissions to use this command!
     description: Gives the user role(s) in discord if they have the permission(s) in the server.
   syncreload:
     permission: rolesync.reload
-    permission-message: You don't have enough permissions to use this command!
     description: Reloads the RoleSync config.
     usage: /<command>
     aliases: ['rreload', 'sreload', 'rolesyncreload']
   unsync:
     permission: rolesync.unsync
-    permission-message: You don't have enough permissions to use this command!
     description: Allows user to unsync themselves.
     usage: /<command> (player)
 permissions:
